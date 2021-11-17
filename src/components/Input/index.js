@@ -1,9 +1,11 @@
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useState } from 'react'
 import strings from '../../utils/strings'
 import InputWrapper from '../InputWrapper'
 import InputSubfieldWrapper from '../InputSubfieldWrapper'
+import 'react-phone-number-input/style.css'
+import PhoneInput from 'react-phone-number-input'
 
 const standardType = (type) => {
   switch (type) {
@@ -31,9 +33,10 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
         id,
     } = fieldData
     const regex = inputMaskValue ? new RegExp(inputMaskValue) : false
+    const [phoneValue, setPhoneValue] = useState();
     let inputType = standardType(type)
     const inputName = id && typeof id === 'string' ? `input_${id.replace(".", "_")}` : id ? id : name
-    
+
     return (subfield) ? (<InputSubfieldWrapper
         errors={errors}
         inputData={fieldData}
@@ -77,7 +80,27 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
             labelFor={name}
             {...wrapProps}
         >
-            <input
+            {type === 'phone' ? (<PhoneInput
+                  //placeholder="Enter phone number"
+                  type="phone"
+                  name={name}
+                  id={name}
+                  maxLength="26"
+                  defaultCountry="US"
+                  //remove duplicate calling code number if phone number is 13 characters and the frist and second value is 1
+                  value={phoneValue && phoneValue.length === 13 && phoneValue[1] === "1" && phoneValue[2] === "1" ? `+${phoneValue.substring(2)}` : phoneValue}
+                  international={true}
+                  limitMaxLength={true}
+                  countryCallingCodeEditable={false}
+                  onChange={setPhoneValue}
+                  ref={register({
+                    required: isRequired && strings.errors.required ,
+                    maxLength: {
+                        value: 25,
+                        message: 'Phone number must be 25 characters or less.',
+                    }
+                  })}/>) 
+                  : (<input
                 aria-invalid={errors}
                 aria-required={isRequired}
                 className={classnames(
@@ -88,7 +111,7 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
                 )}
                 defaultValue={value}
                 id={name}
-                maxLength={maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
+                maxLength={type === 'phone' ? 26 : type === 'text' ? 256 : maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
                 name={name}
                 placeholder={placeholder}
                 ref={register({
@@ -105,7 +128,7 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
                     },
                 })}
                 type={inputType}
-            />
+            />)}
         </InputWrapper>
     )
 }
