@@ -23,8 +23,9 @@ const FieldBuilder = ({
     formLoading,
     setFormLoading,
 }) => {
+    const formFields = formData?.formFields.length ? formData.formFields : formData.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     // Loop through fields and create
-    return formData.formFields.map(field => {
+    return formFields.map(field => {
         // Set the wrapper classes
         const {
             descriptionPlacement: fieldDescPlace,
