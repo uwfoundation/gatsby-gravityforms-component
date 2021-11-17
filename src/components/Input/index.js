@@ -21,7 +21,7 @@ const standardType = (type) => {
   }
 }
 
-const Input = ({ errors, fieldData, name, register, value, subfield, fromNameField, ...wrapProps }) => {
+const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield, fromNameField, ...wrapProps }) => {
     const {
         cssClass,
         inputMaskValue,
@@ -41,6 +41,7 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
         errors={errors}
         inputData={fieldData}
         labelFor={name}
+        fieldHidden={fieldHidden}
         {...wrapProps}
     ><input
         aria-invalid={errors}
@@ -78,6 +79,7 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
             errors={errors}
             inputData={fieldData}
             labelFor={name}
+            fieldHidden={fieldHidden}
             {...wrapProps}
         >
             {type === 'phone' ? (<PhoneInput

@@ -32,6 +32,9 @@ const GravityFormForm = ({
     successCallback = ({ reset }) => reset(),
     errorCallback,
     controls,
+    onChange,
+    checkboxes,
+    options
 }) => {
     // Pull in form functions
     const {
@@ -63,11 +66,13 @@ const GravityFormForm = ({
             if (submissionHasOneFieldEntry(values)) {
                 setLoadingState(true)
 
-                const filteredValues = cleanGroupedFields(values)
+                if(Object.keys(checkboxes).length > 0){
+                    values = {...values, ...checkboxes}
+                }
 
                 const { data, status } = await passToGravityForms({
                     baseUrl: singleForm.apiURL,
-                    formData: filteredValues,
+                    formData: values,
                     id,
                     lambdaEndpoint: lambda,
                 })
@@ -90,7 +95,7 @@ const GravityFormForm = ({
                     }
 
                     errorCallback &&
-                        errorCallback({ filteredValues, error: data, reset })
+                        errorCallback({ values, error: data, reset })
                 }
 
                 if (status === 'success') {
@@ -107,7 +112,7 @@ const GravityFormForm = ({
                     )
 
                     successCallback({
-                        filteredValues,
+                        values,
                         reset,
                         confirmations,
                     })
@@ -164,6 +169,8 @@ const GravityFormForm = ({
                                     presetValues={presetValues}
                                     register={register}
                                     setValue={setValue}
+                                    onChange={onChange}
+                                    options={options}
                                 />
                             </ul>
                         </div>

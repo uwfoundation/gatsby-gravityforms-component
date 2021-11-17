@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import get from 'lodash/get'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import Captcha from '../../components/Captcha'
 import Html from '../../components/Html'
@@ -23,8 +23,81 @@ const FieldBuilder = ({
     controls = {},
     formLoading,
     setFormLoading,
+    onChange,
+    options
 }) => {
     const formFields = formData?.formFields.length ? formData.formFields : formData.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
+    const [fieldValues, setfieldValues] = useState({});
+    useEffect(() => {
+        formFields.forEach(field => {
+            console.log(field, field.type)
+            if(field.type === 'radio' || field.type === 'checkbox'){
+                populateChoiceValues(field)
+            } else if(field.type === 'select'){
+                populateSelectDefault(field)
+            }
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const populateChoiceValues = (field) => {
+        const formattedChoices = typeof field.choices === "string" ? JSON.parse(field.choices) : JSON.parse(JSON.stringify(field.choices))
+        const selected = formattedChoices.filter(choice => {
+            return choice.isSelected
+        })
+        setfieldValues({ ...fieldValues, [field.id]: selected.length ? selected[0].value : '' } )
+    }
+
+    const populateSelectDefault = (field) => {
+        const formattedChoices = typeof field.choices === "string" ? JSON.parse(field.choices) : JSON.parse(JSON.stringify(field.choices))
+        const selected = formattedChoices.filter(choice => {
+            return choice.isSelected
+        })
+        setfieldValues({ ...fieldValues, [field.id]: selected.length > 0 ? selected[0].value : JSON.parse(field.choices)[0].value })
+    }
+
+    const handleFieldChange = (fieldId, value, inputId) => {
+    
+        let fieldInfo = formFields.filter(field => field.id === fieldId)
+
+        if(fieldInfo && fieldInfo?.length > 0 && (fieldInfo[0].type === 'radio' ) && inputId){
+            setfieldValues({
+                ...fieldValues,
+                [fieldId]: {
+                    [inputId]: value,
+                },
+            })
+        }
+        if(fieldInfo && fieldInfo?.length > 0 && (fieldInfo[0].type === 'checkbox') && inputId){
+            let checkIfExists = typeof fieldValues[fieldId] === 'object' ? Object.values(fieldValues[fieldId]).includes(value) : false;
+
+            if(checkIfExists){
+                const updatefv = {
+                    ...fieldValues
+                }
+                delete updatefv[fieldId][inputId]
+    
+                setfieldValues(updatefv)
+
+            }else{
+                setfieldValues({
+                    ...fieldValues,
+                    [fieldId]: {
+                        ...fieldValues[fieldId],
+                        [inputId]: value,
+                    },
+                })
+            }
+        }
+        if(fieldInfo && fieldInfo?.length > 0 && (fieldInfo[0].type === 'select' ) && value){
+            setfieldValues({
+                ...fieldValues,
+                [fieldId]: value,
+            })
+        }
+        //add default or other cases if not radio/replacing value
+    }
+
     // Loop through fields and create
     return formFields.map(field => {
         // Set the wrapper classes
@@ -82,6 +155,64 @@ const FieldBuilder = ({
           return (<InputWrapper inputData={fieldData} labelFor={inputName} {...componentProps}>{React.cloneElement(controls[field.type], componentProps)}</InputWrapper>)
         }
 
+        //CONDITIONAL LOGIC
+        const conditionalLogic = field?.conditionalLogic && typeof field.conditionalLogic === "string" ? JSON.parse(field.conditionalLogic) : field?.conditionalLogic && typeof field.conditionalLogic !== "string" ? JSON.parse(JSON.stringify(field.conditionalLogic)) : null
+        const handleConditionalLogic = (field) => {
+            const rulesMet = !(field?.conditionalLogic) || !(conditionalLogic?.rules)
+                ? null
+                : conditionalLogic.rules.map(rule => {
+                let conditionalValue = fieldValues[rule.fieldId]
+
+                if (typeof conditionalValue == 'object') {
+                    let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId][key] == rule.value)
+                    conditionalValue = matchKey && fieldValues[rule.fieldId][matchKey] ? fieldValues[rule.fieldId][matchKey] : false
+                }
+                
+                switch (rule.operator.toLowerCase()) {
+                    case 'is':
+                        return conditionalValue == rule.value
+    
+                    case 'is not':
+                        return conditionalValue != rule.value
+    
+                    case 'greater than':
+                        return conditionalValue > rule.value
+    
+                    case 'less than':
+                        return conditionalValue < rule.value
+    
+                    case 'contains':
+                        return typeof conditionalValue === 'array' || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
+    
+                    case 'starts with':
+                        return conditionalValue.indexOf(rule.value) == 0
+    
+                    case 'ends with':
+                        return conditionalValue.indexOf(rule.value) == conditionalValue.length - rule.value.length
+                }
+                //console.log(conditionalValue, field.id, fieldValues)
+            })
+            
+            //console.log(rulesMet, rulesMet.indexOf(false))
+            
+            if (conditionalLogic?.actionType && conditionalLogic.actionType.toLowerCase() == 'show') {
+                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase() == 'all' 
+                    ? rulesMet && rulesMet.indexOf(false) >= 0 
+                    : rulesMet && rulesMet.indexOf(true) < 0
+            } else {
+                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase == 'all' 
+                    ? rulesMet && rulesMet.indexOf(true) < 0 
+                    : rulesMet && rulesMet.indexOf(false) >= 0
+            }
+        }
+
+        const fieldHidden = (field) => {
+            if (typeof conditionalLogic === 'object' && field.conditionalLogic !== null) {
+                return handleConditionalLogic(field)
+            }
+            return false
+        }
+
         switch (field.type) {
             // Add note for unsupported captcha field
             case 'captcha':
@@ -118,6 +249,7 @@ const FieldBuilder = ({
                         }
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        fieldHidden={fieldHidden(field)}
                     />
                 )
             case 'textarea':
@@ -130,6 +262,7 @@ const FieldBuilder = ({
                         register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        fieldHidden={fieldHidden(field)}
                     />
                 )
             case 'select':
@@ -142,6 +275,11 @@ const FieldBuilder = ({
                         register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        handleFieldChange={handleFieldChange}
+                        onChange={onChange}
+                        fieldHidden={fieldHidden(field)}
+                        options={options}
+                        setValue={setValue}
                     />
                 )
             case 'multiselect':
@@ -170,6 +308,9 @@ const FieldBuilder = ({
                         register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        onChange={onChange}
+                        handleFieldChange={handleFieldChange}
+                        fieldHidden={fieldHidden(field)}
                     />
                 )
             case 'name':
@@ -187,6 +328,7 @@ const FieldBuilder = ({
                         }
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        fieldHidden={fieldHidden(field)}
                     />
                 )
             case 'html':
