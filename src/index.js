@@ -111,6 +111,11 @@ const GravityFormForm = ({
                         reset,
                         confirmations,
                     })
+
+                    const confirmationContainer = typeof window !== 'undefined' ? document.getElementById("form-confirmation") : null
+                    if(confirmationContainer){
+                        confirmationContainer.scrollIntoView();
+                    }
                 }
             } else {
                 setGeneralError('leastOneField')
@@ -187,8 +192,11 @@ const GravityFormForm = ({
             </div>
         )
     }
-
-    return ReactHtmlParser(confirmationMessage)
+    return (
+        <div id="form-confirmation">
+            {ReactHtmlParser(confirmationMessage)}
+        </div>
+    )
 }
 
 GravityFormForm.defaultProps = {
