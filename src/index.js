@@ -41,7 +41,8 @@ const GravityFormForm = ({
         reset,
         setError,
         setValue,
-    } = useForm()
+        formState: { isValid, isDirty, isSubmitted },
+    } = useForm({mode : 'onChange'})
 
     const [generalError, setGeneralError] = useState('')
     const [formLoading, setLoadingState] = useState(false)
@@ -170,6 +171,7 @@ const GravityFormForm = ({
                                 disabled={formLoading}
                                 id={`gform_submit_button_${id}`}
                                 type="submit"
+                                disabled={isSubmitted ? !isDirty : !isDirty || !isValid }
                             >
                                 {formLoading ? (
                                     <span className="gravityform__button__loading_span">
