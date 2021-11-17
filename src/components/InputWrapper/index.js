@@ -32,13 +32,15 @@ const InputWrapper = ({
             )}
             id={wrapId}
         >
-            <label
-                className="gravityform__label gfield_label"
-                htmlFor={labelFor}
-            >
-                {label}
-                {isRequired && <span className="gfield_required">*</span>}
-            </label>
+            { !(type === 'html') && (
+                <label
+                    className="gravityform__label gfield_label"
+                    htmlFor={labelFor}
+                >
+                    {label}
+                    {isRequired && <span className="gfield_required">*</span>}
+                </label>
+            )}
             {outputDescription(
                 description,
                 descriptionPlacement,
