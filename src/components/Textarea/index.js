@@ -65,9 +65,10 @@ const Textarea = ({
                 )}
                 defaultValue={value}
                 id={name}
-                maxLength={maxLength > 0 ? maxLength : undefined}
+                maxLength={maxLength > 0 ? maxLength : 1000}
                 name={name}
                 placeholder={placeholder}
+                onChange={e => updateOnChangeValues(e)}
                 ref={register({
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxlength: {
