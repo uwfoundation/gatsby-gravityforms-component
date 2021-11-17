@@ -2,6 +2,7 @@ import classnames from 'classnames'
 import get from 'lodash/get'
 import React, { useState, useEffect } from 'react'
 
+import Address from '../../components/Address'
 import Captcha from '../../components/Captcha'
 import Html from '../../components/Html'
 import Input from '../../components/Input'
@@ -329,6 +330,28 @@ const FieldBuilder = ({
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
                         fieldHidden={fieldHidden(field)}
+                    />
+                )
+            case 'address':
+                // loop through the input fields
+                
+                return (
+                    <Address
+                        errors={errors}
+                        fieldData={fieldData}
+                        key={field.id}
+                        name={inputName}
+                        register={register}
+                        value={
+                            get(presetValues, inputName, false)
+                                ? get(presetValues, inputName, false)
+                                : ifDefaultValue(field)
+                        }
+                        wrapClassName={inputWrapperClass}
+                        wrapId={wrapId}
+                        fieldHidden={fieldHidden(field)}
+                        handleFieldChange={handleFieldChange}
+                        onChange={onChange}
                     />
                 )
             case 'html':
