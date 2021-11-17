@@ -22,7 +22,7 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
     const countryOptions = countries.map(country => {
         return <option value={country.value} key={country.value} defaultValue="US">{country.label}</option>
       })
-    const [ setSelected ] = useState('')
+    const [ select, setSelected ] = useState('')
 
     let renderedSubfields = []
 
