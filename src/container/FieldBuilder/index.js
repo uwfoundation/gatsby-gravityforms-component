@@ -7,6 +7,7 @@ import Html from '../../components/Html'
 import Input from '../../components/Input'
 import InputWrapper from '../../components/InputWrapper'
 import Multiselect from '../../components/Multiselect'
+import Name from '../../components/Name'
 import Select from '../../components/Select'
 import SelectorList from '../../components/SelectorList'
 import Textarea from '../../components/Textarea'
@@ -167,6 +168,23 @@ const FieldBuilder = ({
                         key={field.id}
                         name={inputName}
                         register={register}
+                        wrapClassName={inputWrapperClass}
+                        wrapId={wrapId}
+                    />
+                )
+            case 'name':
+                return (
+                    <Name
+                        errors={errors}
+                        fieldData={fieldData}
+                        key={field.id}
+                        name={inputName}
+                        register={register}
+                        value={
+                            get(presetValues, inputName, false)
+                                ? get(presetValues, inputName, false)
+                                : ifDefaultValue(field)
+                        }
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
                     />

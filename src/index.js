@@ -154,7 +154,7 @@ const GravityFormForm = ({
                                     controls={controls}
                                     errors={errors}
                                     formData={singleForm}
-                                    formId={id}
+                                    formId={typeof id === "number" ? id.toString() : id}
                                     presetValues={presetValues}
                                     register={register}
                                     setValue={setValue}
@@ -197,7 +197,10 @@ GravityFormForm.propTypes = {
     controls: PropTypes.object,
     errorCallback: PropTypes.func,
     formData: PropTypes.object.isRequired,
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([
+        PropTypes.number.isRequired,
+        PropTypes.string.isRequired
+      ]),
     lambda: PropTypes.string,
     successCallback: PropTypes.func,
 }
