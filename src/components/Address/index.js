@@ -70,7 +70,7 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
             const id = Number(e.target.name.slice(6))
             handleFieldChange(id, e.target.value)
         }
-        const inputName = `input_${subfield.id.replace(".", "_")}`
+        const inputName = typeof subfield.id === "string" ? `input_${subfield.id.replace(".", "_")}` : `input_${subfield.id.toString().replace(".", "_")}`
 
 
         if(isCountryInput){
@@ -82,7 +82,7 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
                     fieldHidden={fieldHidden}
                 > 
                     <select 
-                        name={`input_${subfield.id.replace(".", "_")}`} 
+                        name={typeof subfield.id === "string" ? `input_${subfield.id.replace(".", "_")}` : `input_${subfield.id.toString().replace(".", "_")}`}
                         /*onChange={e => updateOnChangeValues(e)}*/
                         onBlur={(e) => handleBothOnChangeCalls(e)} 
                         defaultValue="US"

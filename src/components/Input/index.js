@@ -54,9 +54,9 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
             size
         )}
         defaultValue={value}
-        id={`input_${id.replace(".", "_")}`}
+        id={typeof id === "string" ? `input_${id.replace(".", "_")}` : `input_${id.toString().replace(".", "_")}`}
         maxLength={fromNameField ? 51 : maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
-        name={inputName}
+        name={typeof inputName === "string" ? inputName : `input_${inputName.toString().replace(".", "_")}`}
         placeholder={placeholder}
         ref={register({
             required: isRequired && strings.errors.required && !isAddressLineTwo,

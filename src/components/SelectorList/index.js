@@ -44,7 +44,7 @@ const SelectorList = ({ errors, fieldData, name, register, onChange, handleField
                 {options.map(({ isSelected, text, value }, index) => {
                     const choiceID = index + 1
                     const matchInput = fieldData.inputs ? fieldData.inputs.filter(input => value === input.label) : null
-                    const actualId = matchInput && Array.isArray(matchInput) && matchInput[0]?.id ? matchInput[0].id : null
+                    let actualId = matchInput && Array.isArray(matchInput) && matchInput[0]?.id ? matchInput[0].id : null
                     if (typeof actualId === "number"){
                         actualId = actualId.toString()
                     }

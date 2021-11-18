@@ -69,6 +69,13 @@ const GravityFormForm = ({
                 if(Object.keys(checkboxes).length > 0){
                     values = {...values, ...checkboxes}
                 }
+                
+                //catch and handle null radio inputs when no choice is made
+                Object.keys(values).forEach(key =>{
+                    if(values[key] === null ){
+                        values[key] = ''
+                    }
+                })
 
                 const { data, status } = await passToGravityForms({
                     baseUrl: singleForm.apiURL,
@@ -220,6 +227,8 @@ GravityFormForm.propTypes = {
       ]),
     lambda: PropTypes.string,
     successCallback: PropTypes.func,
+    onChange: PropTypes.func,
+    checkboxes: PropTypes.object,
 }
 
 export default GravityFormForm
