@@ -77,6 +77,23 @@ const GravityFormForm = ({
                     }
                 })
 
+                function checkForPhoneInput( myArray){
+                    for (var i=0; i < myArray.length; i++) {
+                        if (myArray[i].type === "phone") {
+                            return true
+                        }
+                    }
+                }
+                if(singleForm && singleForm?.formFields){
+                    if(checkForPhoneInput(singleForm?.formFields)){
+                        Object.keys(values).forEach(key =>{
+                            if(values[key] === '+1' ){
+                                values[key] = ''
+                            }
+                        })
+                    }
+                }
+
                 const { data, status } = await passToGravityForms({
                     baseUrl: singleForm.apiURL,
                     formData: values,
@@ -124,7 +141,7 @@ const GravityFormForm = ({
                         confirmations,
                     })
 
-                    const confirmationContainer = typeof window !== 'undefined' ? document.getElementById("form-confirmation") : null
+                    const confirmationContainer = document.getElementById("form-confirmation")
                     if(confirmationContainer){
                         confirmationContainer.scrollIntoView();
                     }
