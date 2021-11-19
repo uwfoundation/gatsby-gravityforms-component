@@ -12,7 +12,6 @@ import {
 } from './utils/manageErrors'
 import {
     submissionHasOneFieldEntry,
-    cleanGroupedFields,
 } from './utils/manageFormData'
 import passToGravityForms from './utils/passToGravityForms'
 
@@ -84,7 +83,7 @@ const GravityFormForm = ({
                         }
                     }
                 }
-                if(singleForm && singleForm?.formFields || singleForm && singleForm?.formFields?.nodes){
+                if((singleForm && singleForm?.formFields) || (singleForm && singleForm?.formFields?.nodes)){
                     if(checkForPhoneInput(singleForm?.formFields) || checkForPhoneInput(singleForm?.formFields?.nodes)){
                         Object.keys(values).forEach(key =>{
                             if(values[key] === '+1' ){
@@ -204,7 +203,6 @@ const GravityFormForm = ({
                         >
                             <button
                                 className="gravityform__button gform_button button"
-                                disabled={formLoading}
                                 id={`gform_submit_button_${id}`}
                                 type="submit"
                                 disabled={isSubmitted ? !isDirty : !isDirty || !isValid }

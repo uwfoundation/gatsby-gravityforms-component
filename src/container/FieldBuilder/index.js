@@ -164,17 +164,17 @@ const FieldBuilder = ({
                 : conditionalLogic.rules.map(rule => {
                 let conditionalValue = fieldValues[rule.fieldId]
 
-                if (typeof conditionalValue == 'object') {
-                    let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId][key] == rule.value)
+                if (typeof conditionalValue === 'object') {
+                    let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId][key] === rule.value)
                     conditionalValue = matchKey && fieldValues[rule.fieldId][matchKey] ? fieldValues[rule.fieldId][matchKey] : false
                 }
                 
                 switch (rule.operator.toLowerCase()) {
                     case 'is':
-                        return conditionalValue == rule.value
+                        return conditionalValue === rule.value
     
                     case 'is not':
-                        return conditionalValue != rule.value
+                        return conditionalValue !== rule.value
     
                     case 'greater than':
                         return conditionalValue > rule.value
@@ -183,25 +183,27 @@ const FieldBuilder = ({
                         return conditionalValue < rule.value
     
                     case 'contains':
-                        return typeof conditionalValue === 'array' || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
+                        return typeof conditionalValue === 'object' || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
     
                     case 'starts with':
-                        return conditionalValue.indexOf(rule.value) == 0
+                        return conditionalValue.indexOf(rule.value) === 0
     
                     case 'ends with':
-                        return conditionalValue.indexOf(rule.value) == conditionalValue.length - rule.value.length
+                        return conditionalValue.indexOf(rule.value) === conditionalValue.length - rule.value.length
+                    default:
+                        return false
                 }
                 //console.log(conditionalValue, field.id, fieldValues)
             })
             
             //console.log(rulesMet, rulesMet.indexOf(false))
             
-            if (conditionalLogic?.actionType && conditionalLogic.actionType.toLowerCase() == 'show') {
-                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase() == 'all' 
+            if (conditionalLogic?.actionType && conditionalLogic.actionType.toLowerCase() === 'show') {
+                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase() === 'all' 
                     ? rulesMet && rulesMet.indexOf(false) >= 0 
                     : rulesMet && rulesMet.indexOf(true) < 0
             } else {
-                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase == 'all' 
+                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase === 'all' 
                     ? rulesMet && rulesMet.indexOf(true) < 0 
                     : rulesMet && rulesMet.indexOf(false) >= 0
             }
