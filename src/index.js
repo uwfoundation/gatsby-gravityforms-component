@@ -84,8 +84,8 @@ const GravityFormForm = ({
                         }
                     }
                 }
-                if(singleForm && singleForm?.formFields){
-                    if(checkForPhoneInput(singleForm?.formFields)){
+                if(singleForm && singleForm?.formFields || singleForm && singleForm?.formFields?.nodes){
+                    if(checkForPhoneInput(singleForm?.formFields) || checkForPhoneInput(singleForm?.formFields?.nodes)){
                         Object.keys(values).forEach(key =>{
                             if(values[key] === '+1' ){
                                 values[key] = ''
