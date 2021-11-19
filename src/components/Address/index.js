@@ -80,6 +80,7 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
                     inputData={subfield.subfieldData}
                     labelFor={subfield.label}
                     fieldHidden={fieldHidden}
+                    key={subfield.label}
                 > 
                     <select 
                         name={typeof subfield.id === "string" ? `input_${subfield.id.replace(".", "_")}` : `input_${subfield.id.toString().replace(".", "_")}`}
