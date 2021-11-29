@@ -238,6 +238,11 @@ const FieldBuilder = ({
             case 'hidden':
             case 'date':
             case 'phone':
+            case 'fileupload':
+            case 'website':
+            case 'post_title':
+            case 'post_image':
+            case 'post_custom_field':
                 return (
                     <Input
                         errors={errors[inputName]}
@@ -256,6 +261,7 @@ const FieldBuilder = ({
                     />
                 )
             case 'textarea':
+            case 'post_content':
                 return (
                     <Textarea
                         errors={errors[inputName]}
@@ -357,6 +363,7 @@ const FieldBuilder = ({
                     />
                 )
             case 'html':
+            case 'section':
                 return (
                     <Html
                         fieldData={fieldData}
