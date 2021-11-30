@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form/dist/index.ie11'
 import ReactHtmlParser from 'react-html-parser'
 import FormGeneralError from './components/FormGeneralError'
@@ -33,7 +33,8 @@ const GravityFormForm = ({
     controls,
     onChange,
     checkboxes,
-    options
+    options,
+    captchaKey
 }) => {
     // Pull in form functions
     const {
@@ -48,6 +49,7 @@ const GravityFormForm = ({
 
     const [generalError, setGeneralError] = useState('')
     const [formLoading, setLoadingState] = useState(false)
+    const recaptchaRef = useRef(null)
 
     // State for confirmation message
     const [confirmationMessage, setConfirmationMessage] = useState('')
@@ -74,6 +76,12 @@ const GravityFormForm = ({
             // Check that at least one field has been filled in
             if (submissionHasOneFieldEntry(values)) {
                 setLoadingState(true)
+
+                if(Object.keys(values).includes('g-recaptcha-response')){
+                    const token = await recaptchaRef.current.executeAsync();
+                    values['g-recaptcha-response'] = token
+                }
+
 
                 if(Object.keys(checkboxes).length > 0){
                     values = {...values, ...checkboxes}
@@ -205,6 +213,8 @@ const GravityFormForm = ({
                                     setValue={setValue}
                                     onChange={onChange}
                                     options={options}
+                                    recaptchaRef={recaptchaRef}
+                                    captchaKey={captchaKey}
                                 />
                             </ul>
                         </div>

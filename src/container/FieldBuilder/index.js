@@ -25,7 +25,9 @@ const FieldBuilder = ({
     formLoading,
     setFormLoading,
     onChange,
-    options
+    options,
+    recaptchaRef,
+    captchaKey
 }) => {
     const formFields = formData?.formFields.length ? formData.formFields : formData.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     const [fieldValues, setfieldValues] = useState({});
@@ -229,6 +231,8 @@ const FieldBuilder = ({
                         register={register}
                         setValue={setValue}
                         wrapClassName={inputWrapperClass}
+                        recaptchaRef={recaptchaRef}
+                        captchaKey={captchaKey}
                     />
                 )
             // Start with the standard fields

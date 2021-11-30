@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import React, { useState, useRef, useEffect } from 'react'
+import React from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 import InputWrapper from '../InputWrapper'
@@ -11,9 +11,11 @@ const Captcha = ({
     name,
     register,
     setValue,
+    recaptchaRef,
+    captchaKey,
     ...wrapProps
 }) => {
-    if (!process.env.GATSBY_RECAPTCHA_SITE_KEY) {
+    if (!captchaKey) {
         return (
             <div className="gravityform__captcha_notification">
                 <p>
@@ -38,18 +40,6 @@ const Captcha = ({
         )
     }
 
-    const captchaRef = useRef(null)
-    const [isLoaded, setLoaded] = useState(false)
-
-    const changeCaptchaToken = (token = '') => {
-        setValue('g-recaptcha-response', token, true)
-    }
-
-    useEffect(() => {
-        if (isLoaded && errors && errors.message) {
-            captchaRef.current.reset()
-        }
-    }, [errors, isLoaded])
 
     return (
         <InputWrapper
@@ -59,18 +49,17 @@ const Captcha = ({
             {...wrapProps}
         >
             <ReCAPTCHA
-                onExpired={changeCaptchaToken}
-                onLoad={() => setLoaded(true)}
-                onVerify={changeCaptchaToken}
-                ref={captchaRef}
-                sitekey={process.env.GATSBY_RECAPTCHA_SITE_KEY}
+                ref={recaptchaRef}
+                sitekey={captchaKey}
                 theme={captchaTheme || 'light'}
+                size="invisible"
             />
             <input
                 name="g-recaptcha-response"
                 ref={register({})}
                 type="hidden"
             />
+           <p className="recaptchaBranding">This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and <a href="https://policies.google.com/terms">Terms of Service</a> apply.</p>
         </InputWrapper>
     )
 }
