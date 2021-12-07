@@ -375,6 +375,7 @@ const FieldBuilder = ({
                         name={inputName}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        fieldHidden={fieldHidden(field)}
                     />
                 )
 
