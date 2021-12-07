@@ -120,16 +120,29 @@ const GravityFormForm = ({
 
                 setLoadingState(false)
 
-                if (status === 'error') {
+                const returnData = data?.data
+
+                if (status === 'error' || returnData?.is_valid === false) {
                     // Handle the errors
                     // First check to make sure we have the correct data
 
                     if (data?.status === 'gravityFormErrors') {
-                        // Pass messages to handle that sets react-hook-form errors
+                        // Pass messages to handle react-hook-form errors
                         handleGravityFormsValidationErrors(
                             data.validation_messages,
-                            setError
+                            setError,
+                            singleForm
                         )
+                    } else if(returnData?.is_valid === false){
+                        if(returnData?.validation_messages && Object.keys(returnData?.validation_messages).length > 0){
+                            handleGravityFormsValidationErrors(
+                                returnData.validation_messages,
+                                setError,
+                                singleForm
+                            )
+                        } else{
+                            setGeneralError('formHasError')
+                        }
                     } else {
                         // Seemed to be an unknown issue
                         setGeneralError('unknownError')
