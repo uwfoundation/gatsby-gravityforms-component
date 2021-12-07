@@ -25,7 +25,7 @@ const InputWrapper = ({
     return (
         <li
             className={classnames(
-                wrapClassName,
+                wrapClassName?.toLowerCase(),
                 errors && 'gravityform__field--error',
                 cssClass,
                 fieldHiddenClass
@@ -73,6 +73,14 @@ const InputWrapper = ({
                     className="gravityform__error_message gfield_description validation_message"
                 >
                     {errors.message}
+                </div>
+            )}
+            {errors && errors.type === "validOption" && (
+                <div
+                    aria-live="polite"
+                    className="gravityform__error_message gfield_description validation_message"
+                >
+                    This field is required, please select an option.
                 </div>
             )}
         </li>
