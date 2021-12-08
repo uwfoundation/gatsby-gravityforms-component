@@ -68,10 +68,10 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
 
     //add/update default value if using current or prev class
     useEffect(() => {
-        if(cssClass === "currentPageTitle" && currentPageTitle){
+        if(cssClass && cssClass.includes("currentPageTitle") && currentPageTitle){
             setDefaultValue(currentPageTitle)
         }
-        if(cssClass === "prevPageTitle" && window?.localStorage?.prevpage_title){
+        if(cssClass && cssClass.includes("prevPageTitle") && window?.localStorage?.prevpage_title){
             setDefaultValue(window.localStorage.prevpage_title)
         }
     }, [currentPageTitle, cssClass]);

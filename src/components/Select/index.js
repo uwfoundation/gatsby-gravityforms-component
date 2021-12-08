@@ -16,7 +16,7 @@ const Select = ({ errors, fieldData, name, handleFieldChange, onChange, setValue
     let selectChoices
     let newChoices = []
     
-    if (options && options.length > 0 && cssClass === "populate_dynamically"){
+    if (options && options.length > 0 && cssClass && cssClass.includes("populate_dynamically")){
         options.forEach(option => newChoices.push({"text":option.options, "value": option.options, "isSelected": false, price: ""}))
         selectChoices = newChoices
     } else{
