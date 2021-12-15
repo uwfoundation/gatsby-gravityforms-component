@@ -169,6 +169,7 @@ const GravityFormForm = ({
                         values,
                         reset,
                         confirmations,
+                        formData: singleForm,
                     })
 
                     const confirmationContainer = document.getElementById("form-confirmation")
