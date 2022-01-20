@@ -29,11 +29,10 @@ const FieldBuilder = ({
     recaptchaRef,
     captchaKey
 }) => {
-    const formFields = formData?.formFields.length ? formData.formFields : formData.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
+    const formFields = formData?.formFields?.length ? formData?.formFields : formData?.formFields?.nodes ? formData?.formFields?.nodes : formData[0].node.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     const [fieldValues, setfieldValues] = useState({});
     useEffect(() => {
         formFields.forEach(field => {
-            console.log(field, field.type)
             if(field.type === 'radio' || field.type === 'checkbox'){
                 populateChoiceValues(field)
             } else if(field.type === 'select'){
@@ -218,7 +217,7 @@ const FieldBuilder = ({
             return false
         }
 
-        switch (field.type) {
+        switch (field.type.toLowerCase()) {
             // Add note for unsupported captcha field
             case 'captcha':
                 return (
