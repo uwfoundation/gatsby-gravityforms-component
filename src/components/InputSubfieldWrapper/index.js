@@ -41,7 +41,7 @@ const InputSubfieldWrapper = ({
                 'above',
                 errors
             )}
-            <div className={`ginput_container ginput_container_${type.toLowerCase()}`}>
+            <div className={`ginput_container ginput_container_${type}`}>
                 {children}
                 {maxLength > 0 && (
                     <div className="charleft ginput_counter warningTextareaInfo">

@@ -30,6 +30,8 @@ const FieldBuilder = ({
     captchaKey
 }) => {
     const formFields = formData?.formFields?.length ? formData?.formFields : formData?.formFields?.nodes ? formData?.formFields?.nodes : formData[0].node.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
+    formFields.forEach(field => field.type = field.type.toLowerCase())
+
     const [fieldValues, setfieldValues] = useState({});
     useEffect(() => {
         formFields.forEach(field => {
@@ -217,7 +219,7 @@ const FieldBuilder = ({
             return false
         }
 
-        switch (field.type.toLowerCase()) {
+        switch (field.type) {
             // Add note for unsupported captcha field
             case 'captcha':
                 return (

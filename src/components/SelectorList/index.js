@@ -40,7 +40,7 @@ const SelectorList = ({ errors, fieldData, name, register, onChange, handleField
             fieldHidden={fieldHidden}
             {...wrapProps}
         >
-            <ul className={`gfield_${type.toLowerCase()}`} id={name}>
+            <ul className={`gfield_${type}`} id={name}>
                 {options.map(({ isSelected, text, value }, index) => {
                     const choiceID = index + 1
                     const matchInput = fieldData.inputs ? fieldData.inputs.filter(input => value === input.label) : null
