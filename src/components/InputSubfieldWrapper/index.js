@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { outputDescription } from '../../utils/inputSettings'
 
-const InputWrapper = ({
+const InputSubfieldWrapper = ({
     children,
     errors,
     inputData: {
@@ -17,24 +17,20 @@ const InputWrapper = ({
     },
     labelFor,
     wrapClassName,
-    wrapId,
+    wrapId
 }) => {
+    //console.log(label)
+
     return (
-        <li
+        <div
             className={classnames(
                 wrapClassName,
                 errors && 'gravityform__field--error',
-                cssClass
+                cssClass, 'subfield__wrapper',
             )}
             id={wrapId}
         >
-            <label
-                className="gravityform__label gfield_label"
-                htmlFor={labelFor}
-            >
-                {label}
-                {isRequired && <span className="gfield_required">*</span>}
-            </label>
+            
             {outputDescription(
                 description,
                 descriptionPlacement,
@@ -55,21 +51,30 @@ const InputWrapper = ({
                     </div>
                 */}
             </div>
+            { !(type === 'html') && (
+            <label
+                className="gravityform__label gfield_label gfield_label--subfield"
+                htmlFor={labelFor}
+            >
+                {label}
+                {isRequired && <span className="gfield_required">*</span>}
+            </label>
+        )}
             {outputDescription(
                 description,
                 descriptionPlacement,
                 'below',
                 errors
             )}
-            {errors && errors.message && (
+            {errors && (errors.message || errors?.type === "required") && (
                 <div
                     aria-live="polite"
                     className="gravityform__error_message gfield_description validation_message"
                 >
-                    {errors.message}
+                    {errors?.type === "required" ? 'This field is required.' : errors.message}
                 </div>
             )}
-        </li>
+        </div>
     )
 }
 
@@ -78,9 +83,9 @@ const maxLengthSentence = (length, type) => {
     return length && ` (maxiumum ${length} ${word})`
 }
 
-export default InputWrapper
+export default InputSubfieldWrapper
 
-InputWrapper.propTypes = {
+InputSubfieldWrapper.propTypes = {
     children: PropTypes.node,
     errors: PropTypes.object,
     inputData: PropTypes.shape({

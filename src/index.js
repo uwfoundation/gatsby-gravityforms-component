@@ -41,7 +41,8 @@ const GravityFormForm = ({
         reset,
         setError,
         setValue,
-    } = useForm()
+        formState: { isValid, isDirty, isSubmitted },
+    } = useForm({mode : 'onChange'})
 
     const [generalError, setGeneralError] = useState('')
     const [formLoading, setLoadingState] = useState(false)
@@ -63,6 +64,23 @@ const GravityFormForm = ({
                 setLoadingState(true)
 
                 const filteredValues = cleanGroupedFields(values)
+
+                function checkForPhoneInput( myArray){
+                    for (var i=0; i < myArray.length; i++) {
+                        if (myArray[i].type === "phone") {
+                            return true
+                        }
+                    }
+                }
+                if(singleForm && singleForm?.formFields){
+                    if(checkForPhoneInput(singleForm?.formFields)){
+                        Object.keys(values).forEach(key =>{
+                            if(values[key] === '+1' ){
+                                values[key] = ''
+                            }
+                        })
+                    }
+                }
 
                 const { data, status } = await passToGravityForms({
                     baseUrl: singleForm.apiURL,
@@ -110,6 +128,11 @@ const GravityFormForm = ({
                         reset,
                         confirmations,
                     })
+
+                    const confirmationContainer = document.getElementById("form-confirmation")
+                    if(confirmationContainer){
+                        confirmationContainer.scrollIntoView();
+                    }
                 }
             } else {
                 setGeneralError('leastOneField')
@@ -154,7 +177,7 @@ const GravityFormForm = ({
                                     controls={controls}
                                     errors={errors}
                                     formData={singleForm}
-                                    formId={id}
+                                    formId={typeof id === "number" ? id.toString() : id}
                                     presetValues={presetValues}
                                     register={register}
                                     setValue={setValue}
@@ -170,6 +193,7 @@ const GravityFormForm = ({
                                 disabled={formLoading}
                                 id={`gform_submit_button_${id}`}
                                 type="submit"
+                                disabled={isSubmitted ? !isDirty : !isDirty || !isValid }
                             >
                                 {formLoading ? (
                                     <span className="gravityform__button__loading_span">
@@ -185,8 +209,11 @@ const GravityFormForm = ({
             </div>
         )
     }
-
-    return ReactHtmlParser(confirmationMessage)
+    return (
+        <div id="form-confirmation">
+            {ReactHtmlParser(confirmationMessage)}
+        </div>
+    )
 }
 
 GravityFormForm.defaultProps = {
@@ -197,7 +224,10 @@ GravityFormForm.propTypes = {
     controls: PropTypes.object,
     errorCallback: PropTypes.func,
     formData: PropTypes.object.isRequired,
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([
+        PropTypes.number.isRequired,
+        PropTypes.string.isRequired
+      ]),
     lambda: PropTypes.string,
     successCallback: PropTypes.func,
 }
