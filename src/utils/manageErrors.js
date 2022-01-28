@@ -3,10 +3,11 @@
  * Set errors to the corrosponding input
  */
 
-export const handleGravityFormsValidationErrors = (data, setError) => {
+export const handleGravityFormsValidationErrors = (data, setError, form) => {
     Object.keys(data).forEach(function(key) {
         const id = key.replace('.', '_')
         const fieldId = `input_${id}`
-        setError(fieldId, 'gf_validation', data[key])
+        //setError(fieldId, 'gf_validation', data[key])
+        setError(fieldId, {message: data[key]})
     })
 }

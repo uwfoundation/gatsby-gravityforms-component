@@ -56,7 +56,7 @@ const FieldBuilder = ({
         const selected = formattedChoices.filter(choice => {
             return choice.isSelected
         })
-        setfieldValues({ ...fieldValues, [field.id]: selected.length > 0 ? selected[0].value : JSON.parse(field.choices)[0].value })
+        setfieldValues({ ...fieldValues, [field.id]: selected.length > 0 ? selected[0].value : JSON.parse(typeof formattedChoices === "string" ? formattedChoices : JSON.stringify(formattedChoices))[0].value })
     }
 
     const handleFieldChange = (fieldId, value, inputId) => {
@@ -375,6 +375,7 @@ const FieldBuilder = ({
                         name={inputName}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
+                        fieldHidden={fieldHidden(field)}
                     />
                 )
 

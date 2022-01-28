@@ -1,13 +1,57 @@
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useEffect } from 'react'
 import InputWrapper from '../../components/InputWrapper'
 
-const Select = ({ errors, fieldData, name, register, ...wrapProps }) => {
-    const { choices, cssClass, isRequired, size } = fieldData
-    const options = JSON.parse(choices)
+const Select = ({ errors, fieldData, name, handleFieldChange, onChange, setValue, register, options, ...wrapProps }) => {
+    const { choices, cssClass, isRequired, size, placeholder } = fieldData
+    
+    const handleBothOnChangeCalls = (e) => {
+        //onChange(fieldData, value, choiceID)
+        const id = Number(e.target.name.slice(6))
+        handleFieldChange(id, e.target.value)
+    }
+
+    //check for options form what we do template
+    let selectChoices
+    let newChoices = []
+    
+    if (options && options.length > 0 && cssClass && cssClass.includes("populate_dynamically")){
+        options.forEach(option => newChoices.push({"text":option.options, "value": option.options, "isSelected": false, price: ""}))
+        selectChoices = newChoices
+    } else{
+        selectChoices = typeof choices === "string" ? JSON.parse(choices) : JSON.parse(JSON.stringify(choices))
+    }
+    if(placeholder && placeholder.length > 0){
+        selectChoices.unshift({"text":placeholder, "value": placeholder, "isSelected": true, price: ""})
+    }
+    
+    //get param from query, if fieldValue is expecting a query param
+    const fieldValue = fieldData.inputName ? fieldData.inputName : null //if it's a hidden field, the parameter value is stored under inputName
+    const paramToCheck = fieldValue && fieldValue !== '' ? fieldValue : null
+    const queryToCheck = typeof document !== "undefined" ? new URLSearchParams(document.location.search.substring(1)): null;
+    const param = paramToCheck && queryToCheck ? queryToCheck.get(paramToCheck) : null;
+
+    //if param exists or a choice isSelected, setValue
+    useEffect(() => {
+        if (param){
+            setValue(name, param, { shouldDirty: true, })
+            const id = Number(name.slice(6))
+            handleFieldChange(id, param)
+        } else if (!param && selectChoices && selectChoices.length > 0){
+            selectChoices.forEach(({ isSelected, value }) => {
+                if(isSelected){
+                    setValue(name, value, { shouldDirty: true })
+                    const id = Number(name.slice(6))
+                    handleFieldChange(id, value)
+                }
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [param, name, setValue]);
+
     return (
-        <InputWrapper
+            <InputWrapper
             errors={errors}
             inputData={fieldData}
             labelFor={name}
@@ -26,14 +70,17 @@ const Select = ({ errors, fieldData, name, register, ...wrapProps }) => {
                 )}
                 id={name}
                 name={name}
+                onChange={(e) => handleBothOnChangeCalls(e)}
                 ref={register({
                     required: isRequired && 'This field is required',
+                    validate: {
+                        validOption: (value) => isRequired && !param ? value !== placeholder : true,
+                    },
                 })}
             >
-                {options.map(({ isSelected, text, value }, index) => {
+                {selectChoices.map(({ text, value }, index) => {
                     return (
                         <option
-                            defaultValue={isSelected}
                             key={`${name}-${index}`}
                             value={value}
                         >
@@ -51,7 +98,10 @@ export default Select
 Select.propTypes = {
     errors: PropTypes.object,
     fieldData: PropTypes.shape({
-        choices: PropTypes.string,
+        choices: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.array
+          ]),
         cssClass: PropTypes.string,
         isRequired: PropTypes.bool,
         size: PropTypes.string,
