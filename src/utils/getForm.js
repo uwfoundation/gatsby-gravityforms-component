@@ -10,7 +10,7 @@ const getForm = (formData, id) => {
     if (formData && id) {
         // Filter returned data to get specific form
         const form = formData.edges.filter(function(form) {
-            return parseInt(form.node.formId) === parseInt(id)
+            return parseInt(form.node.formId || form.node.databaseId) === parseInt(id)
         })
 
         // If we have a form, clean up a little more before returning
