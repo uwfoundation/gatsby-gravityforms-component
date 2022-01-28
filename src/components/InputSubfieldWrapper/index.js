@@ -17,9 +17,12 @@ const InputSubfieldWrapper = ({
     },
     labelFor,
     wrapClassName,
-    wrapId
+    wrapId,
+    fieldHidden
 }) => {
     //console.log(label)
+    const fieldHiddenClass = fieldHidden === true ? 'gform_hidden' : ''
+    const isAddressLineTwo = label === 'Address Line 2' ? true: false
 
     return (
         <div
@@ -27,6 +30,7 @@ const InputSubfieldWrapper = ({
                 wrapClassName,
                 errors && 'gravityform__field--error',
                 cssClass, 'subfield__wrapper',
+                fieldHiddenClass
             )}
             id={wrapId}
         >
@@ -57,7 +61,7 @@ const InputSubfieldWrapper = ({
                 htmlFor={labelFor}
             >
                 {label}
-                {isRequired && <span className="gfield_required">*</span>}
+                {isRequired && !isAddressLineTwo && <span className="gfield_required">*</span>}
             </label>
         )}
             {outputDescription(

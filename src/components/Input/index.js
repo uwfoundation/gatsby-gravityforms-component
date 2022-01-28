@@ -21,7 +21,7 @@ const standardType = (type) => {
   }
 }
 
-const Input = ({ errors, fieldData, name, register, value, subfield, fromNameField, ...wrapProps }) => {
+const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield, fromNameField, ...wrapProps }) => {
     const {
         cssClass,
         inputMaskValue,
@@ -36,15 +36,17 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
     const [phoneValue, setPhoneValue] = useState();
     let inputType = standardType(type)
     const inputName = id && typeof id === 'string' ? `input_${id.replace(".", "_")}` : id ? id : name
+    const isAddressLineTwo = name && name === 'Address Line 2' ? true : false
 
     return (subfield) ? (<InputSubfieldWrapper
         errors={errors}
         inputData={fieldData}
         labelFor={name}
+        fieldHidden={fieldHidden}
         {...wrapProps}
     ><input
         aria-invalid={errors}
-        aria-required={isRequired}
+        aria-required={!isAddressLineTwo ? isRequired : false}
         className={classnames(
             'gravityform__field__input',
             `gravityform__field__input__${type}`,
@@ -52,12 +54,12 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
             size
         )}
         defaultValue={value}
-        id={`input_${id.replace(".", "_")}`}
+        id={typeof id === "string" ? `input_${id.replace(".", "_")}` : `input_${id.toString().replace(".", "_")}`}
         maxLength={fromNameField ? 51 : maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
-        name={inputName}
+        name={typeof inputName === "string" ? inputName : `input_${inputName.toString().replace(".", "_")}`}
         placeholder={placeholder}
         ref={register({
-            required: isRequired && strings.errors.required,
+            required: isRequired && strings.errors.required && !isAddressLineTwo,
             maxLength: fromNameField ? {
                 value: 50,
                 message: "Name must be less than 50 characters.",
@@ -78,6 +80,7 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
             errors={errors}
             inputData={fieldData}
             labelFor={name}
+            fieldHidden={fieldHidden}
             {...wrapProps}
         >
             {type === 'phone' ? (<PhoneInput
@@ -102,7 +105,7 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
                   })}/>) 
                   : (<input
                 aria-invalid={errors}
-                aria-required={isRequired}
+                aria-required={!fieldHidden ? isRequired : false}
                 className={classnames(
                     'gravityform__field__input',
                     `gravityform__field__input__${type}`,
@@ -115,16 +118,34 @@ const Input = ({ errors, fieldData, name, register, value, subfield, fromNameFie
                 name={name}
                 placeholder={placeholder}
                 ref={register({
-                    required: isRequired && strings.errors.required,
-                    maxlength: {
+                    required: !fieldHidden ? isRequired && strings.errors.required : false,
+                    maxLength: type === 'phone' ? {
+                        value: 25,
+                        message: 'Phone number must be 25 characters or less.',
+                    } : type === 'text' ? {
+                        value: 255,
+                        message: "Must be 255 characters or less.",
+                    } : maxLength > 0 && maxLength ? {
                         value: maxLength > 0 && maxLength,
                         message:
                             maxLength > 0 &&
                             `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
-                    },
+                    } : null,
                     pattern: {
-                        value: regex,
-                        message: regex && strings.errors.pattern,
+                        value: type === 'phone' 
+                            ? /^[- ]*[0-9][- 0-9]*$/ 
+                            : type === 'email' 
+                                ? /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ 
+                                : type === 'website'
+                                    ? /^(http|https):/
+                                    : regex,
+                        message: type === 'phone' 
+                            ? 'Phone number can only contain numbers and dashes.' 
+                            : type === 'email' 
+                                ? "Must be valid email address." 
+                                : type === 'website'
+                                    ? 'Must be a valid url starting with http:// or https://'
+                                    : regex && strings.errors.pattern,
                     },
                 })}
                 type={inputType}

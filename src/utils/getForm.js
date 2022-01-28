@@ -6,7 +6,7 @@
  * @param {int} id Form ID from Gravity Forms.
  * @returns array or false.
  */
-export default (formData, id) => {
+const getForm = (formData, id) => {
     if (formData && id) {
         // Filter returned data to get specific form
         const form = formData.edges.filter(function(form) {
@@ -26,3 +26,4 @@ export default (formData, id) => {
 
     return false
 }
+export default getForm

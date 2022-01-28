@@ -18,23 +18,29 @@ const InputWrapper = ({
     labelFor,
     wrapClassName,
     wrapId,
+    fieldHidden
 }) => {
+    const fieldHiddenClass = fieldHidden === true ? 'gform_hidden' : ''
+
     return (
         <li
             className={classnames(
                 wrapClassName,
                 errors && 'gravityform__field--error',
-                cssClass
+                cssClass,
+                fieldHiddenClass
             )}
             id={wrapId}
         >
-            <label
-                className="gravityform__label gfield_label"
-                htmlFor={labelFor}
-            >
-                {label}
-                {isRequired && <span className="gfield_required">*</span>}
-            </label>
+            { !(type === 'html') && (
+                <label
+                    className="gravityform__label gfield_label"
+                    htmlFor={labelFor}
+                >
+                    {label}
+                    {isRequired && <span className="gfield_required">*</span>}
+                </label>
+            )}
             {outputDescription(
                 description,
                 descriptionPlacement,

@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import InputWrapper from '../../components/InputWrapper'
 import strings from '../../utils/strings'
 
@@ -12,6 +12,7 @@ const Textarea = ({
     value,
     wrapClassName,
     wrapId,
+    fieldHidden
 }) => {
     const {
         cssClass,
@@ -22,7 +23,26 @@ const Textarea = ({
         size,
         type,
     } = fieldData
+    const [textareaCharLeft, setCharLeft ] = useState(1000)
+    
     const regex = inputMaskValue ? new RegExp(inputMaskValue) : false
+    let charactersLeft = maxLength ? maxLength : 1000
+    let maxChar = maxLength ? maxLength : 1000
+    useEffect(() => {
+        setCharLeft(charactersLeft)
+    }, [charactersLeft]);
+    const updateOnChangeValues = (e) => {
+        if(e.target.type === 'textarea'){
+          let currentLength = e.target.value.length
+          if(currentLength > maxChar){
+            charactersLeft = 0
+            setCharLeft(charactersLeft)
+          } else{
+            charactersLeft = maxChar - currentLength
+            setCharLeft(charactersLeft)
+          }
+        }
+    }
 
     return (
         <InputWrapper
@@ -31,10 +51,11 @@ const Textarea = ({
             labelFor={name}
             wrapClassName={wrapClassName}
             wrapId={wrapId}
+            fieldHidden={fieldHidden}
         >
             <textarea
                 aria-invalid={errors}
-                aria-required={isRequired}
+                aria-required={!fieldHidden ? isRequired : false}
                 className={classnames(
                     'gravityform__field__input',
                     `gravityform__field__input__${type}`,
@@ -44,11 +65,12 @@ const Textarea = ({
                 )}
                 defaultValue={value}
                 id={name}
-                maxLength={maxLength > 0 ? maxLength : undefined}
+                maxLength={maxLength > 0 ? maxLength : 1000}
                 name={name}
                 placeholder={placeholder}
+                onChange={e => updateOnChangeValues(e)}
                 ref={register({
-                    required: isRequired && strings.errors.required,
+                    required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxlength: {
                         value: maxLength > 0 && maxLength,
                         message:
@@ -62,6 +84,7 @@ const Textarea = ({
                 })}
                 type={type}
             />
+            {textareaCharLeft < maxChar && <div style={{fontSize : `14px`}}>{textareaCharLeft} characters left</div>}
         </InputWrapper>
     )
 }

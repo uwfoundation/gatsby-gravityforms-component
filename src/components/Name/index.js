@@ -4,7 +4,7 @@ import React from 'react'
 import InputWrapper from '../InputWrapper'
 import Input from '../Input'
 
-const Name = ({ errors, fieldData, name, register, value, ...wrapProps }) => {
+const Name = ({ errors, fieldData, name, register, value, fieldHidden, ...wrapProps }) => {
     //console.log('name', fieldData, name, value)
     //console.log(inputs)
     //console.log(value)
@@ -64,6 +64,7 @@ const Name = ({ errors, fieldData, name, register, value, ...wrapProps }) => {
             name={inputName}
             register={subfield.register}
             //value={value}
+            fieldHidden={fieldHidden}
             fromNameField
         />)
     })
@@ -72,6 +73,7 @@ return (
             errors={errors}
             inputData={fieldData}
             labelFor={name}
+            fieldHidden={fieldHidden}
             {...wrapProps}
         >{inputFields}</InputWrapper>
 )
