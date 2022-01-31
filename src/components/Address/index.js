@@ -6,7 +6,7 @@ import Input from '../Input'
 import InputSubfieldWrapper from '../InputSubfieldWrapper'
 import countryList from "react-select-country-list"
 
-const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handleFieldChange, onChange, ...wrapProps }) => {
+const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handleFieldChange, onChange, customCountryList, ...wrapProps }) => {
     
     const {
         cssClass,
@@ -18,7 +18,7 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
         inputs,
     } = fieldData
     
-    const [ countries ] = useState(countryList().getData())
+    const [ countries ] = useState(customCountryList || countryList().getData())
     const countryOptions = countries.map(country => {
         return <option value={country.value} key={country.value} defaultValue="US">{country.label}</option>
       })
