@@ -4,9 +4,8 @@ import React, {useState} from 'react'
 import InputWrapper from '../InputWrapper'
 import Input from '../Input'
 import InputSubfieldWrapper from '../InputSubfieldWrapper'
-import countryList from "react-select-country-list"
 
-const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handleFieldChange, onChange, customCountryList, ...wrapProps }) => {
+const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handleFieldChange, onChange, countryList, ...wrapProps }) => {
     
     const {
         cssClass,
@@ -18,10 +17,9 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
         inputs,
     } = fieldData
     
-    const [ countries ] = useState(customCountryList || countryList().getData())
-    const countryOptions = countries.map(country => {
+    const countryOptions = countryList && countryList.length > 0 ? countryList?.map(country => {
         return <option value={country.value} key={country.value} defaultValue="US">{country.label}</option>
-      })
+      }) : null
     const [ select, setSelected ] = useState('')
 
     let renderedSubfields = []
@@ -73,7 +71,7 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
         const inputName = typeof subfield.id === "string" ? `input_${subfield.id.replace(".", "_")}` : `input_${subfield.id.toString().replace(".", "_")}`
 
 
-        if(isCountryInput){
+        if(isCountryInput && countryOptions){
             return (
                 <InputSubfieldWrapper
                     errors={errors}

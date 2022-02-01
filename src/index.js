@@ -35,7 +35,7 @@ const GravityFormForm = ({
     checkboxes,
     options,
     captchaKey,
-    customCountryList
+    countryList
 }) => {
     // Pull in form functions
     const {
@@ -230,7 +230,7 @@ const GravityFormForm = ({
                                     options={options}
                                     recaptchaRef={recaptchaRef}
                                     captchaKey={captchaKey}
-                                    customCountryList={customCountryList}
+                                    countryList={countryList}
                                 />
                             </ul>
                         </div>
