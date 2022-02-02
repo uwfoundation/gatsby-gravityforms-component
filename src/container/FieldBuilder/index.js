@@ -27,7 +27,8 @@ const FieldBuilder = ({
     onChange,
     options,
     recaptchaRef,
-    captchaKey
+    captchaKey,
+    countryList
 }) => {
     const formFields = formData?.formFields?.length ? formData?.formFields : formData?.formFields?.nodes ? formData?.formFields?.nodes : formData[0].node.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     formFields.forEach(field => field.type = field.type.toLowerCase())
@@ -365,6 +366,7 @@ const FieldBuilder = ({
                         fieldHidden={fieldHidden(field)}
                         handleFieldChange={handleFieldChange}
                         onChange={onChange}
+                        countryList={countryList}
                     />
                 )
             case 'html':
