@@ -116,6 +116,8 @@ const FieldBuilder = ({
         const descriptionPlacement =
             fieldDescPlace || formData.descriptionPlacement?.toLowerCase()
 
+        console.log(descriptionPlacement, fieldDescPlace, formData.descriptionPlacement?.toLowerCase())
+
         const subLabelPlacement =
             fieldSubLabelPlace || formData.subLabelPlacement?.toLowerCase()
 
