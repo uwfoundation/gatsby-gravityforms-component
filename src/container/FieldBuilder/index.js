@@ -114,10 +114,10 @@ const FieldBuilder = ({
         } = field
 
         const descriptionPlacement =
-            fieldDescPlace || formData.descriptionPlacement
+            fieldDescPlace || formData.descriptionPlacement.toLowerCase()
 
         const subLabelPlacement =
-            fieldSubLabelPlace || formData.subLabelPlacement
+            fieldSubLabelPlace || formData.subLabelPlacement.toLowerCase()
 
         const fieldData = { ...field, descriptionPlacement }
         let inputWrapperClass = classnames(
