@@ -114,9 +114,7 @@ const FieldBuilder = ({
         } = field
 
         const descriptionPlacement =
-            fieldDescPlace || formData.descriptionPlacement?.toLowerCase()
-
-        console.log(descriptionPlacement, fieldDescPlace, formData.descriptionPlacement?.toLowerCase())
+            fieldDescPlace === "INHERIT" ? formData.descriptionPlacement?.toLowerCase() : fieldDescPlace || formData.descriptionPlacement?.toLowerCase()
 
         const subLabelPlacement =
             fieldSubLabelPlace || formData.subLabelPlacement?.toLowerCase()
