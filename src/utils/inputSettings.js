@@ -12,7 +12,7 @@ export function outputDescription(
     currentPosition,
     errors
 ) {
-    if (description && currentPosition === placement) {
+    if (description && currentPosition === placement.toLowerCase()) {
         return (
             <div
                 className={`gravityforms__description gravityforms__description--${placement} gfield_description${

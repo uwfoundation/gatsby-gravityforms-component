@@ -114,10 +114,10 @@ const FieldBuilder = ({
         } = field
 
         const descriptionPlacement =
-            fieldDescPlace || formData.descriptionPlacement
+            fieldDescPlace === "INHERIT" ? formData.descriptionPlacement?.toLowerCase() : fieldDescPlace || formData.descriptionPlacement?.toLowerCase()
 
         const subLabelPlacement =
-            fieldSubLabelPlace || formData.subLabelPlacement
+            fieldSubLabelPlace || formData.subLabelPlacement?.toLowerCase()
 
         const fieldData = { ...field, descriptionPlacement }
         let inputWrapperClass = classnames(
