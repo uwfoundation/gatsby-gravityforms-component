@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React, { useState, useRef } from 'react'
-import { useForm } from 'react-hook-form/dist/index.ie11'
+import { useForm, FormProvider } from 'react-hook-form'
 import ReactHtmlParser from 'react-html-parser'
 import FormGeneralError from './components/FormGeneralError'
 import FieldBuilder from './container/FieldBuilder'
@@ -28,7 +28,7 @@ const GravityFormForm = ({
     formData,
     lambda,
     presetValues = {},
-    successCallback = ({ reset }) => reset(),
+    successCallback,
     errorCallback,
     controls,
     onChange,
@@ -38,15 +38,13 @@ const GravityFormForm = ({
     countryList
 }) => {
     // Pull in form functions
+    const methods = useForm({mode : 'onChange',});
     const {
-        errors,
-        handleSubmit,
-        register,
-        reset,
-        setError,
-        setValue,
-        formState: { isValid, isDirty, isSubmitted },
-    } = useForm({mode : 'onChange'})
+      handleSubmit,
+      setError,
+      reset,
+      formState: { isValid, isDirty, isSubmitted, errors },
+    } = methods;
 
     const [generalError, setGeneralError] = useState('')
     const [formLoading, setLoadingState] = useState(false)
@@ -189,71 +187,74 @@ const GravityFormForm = ({
             <div className="gform_wrapper" id={`gform_wrapper_${id}`}>
                 <div className="gform_anchor" id={`gf_${id}`} />
                 {singleForm && (
-                    <form
-                        className={
-                            formLoading
-                                ? `gravityform gravityform--loading gravityform--id-${id}`
-                                : `gravityform gravityform--id-${id}`
-                        }
-                        //TODO: ID change go GF standard "gfrom_1"?
-                        id={`gravityform--id-${id}`}
-                        key={`gravityform--id-${id}`}
-                        onSubmit={handleSubmit(onSubmitCallback)}
-                        encType={isMultipart ? "multipart/form-data" : null}
-                    >
-                        {generalError && (
-                            <FormGeneralError errorCode={generalError} />
-                        )}
-                        <div className="gform_body">
-                            <ul
-                                className={classnames(
-                                    'gform_fields',
-                                    {
-                                        [`form_sublabel_${singleForm.subLabelPlacement}`]: singleForm.subLabelPlacement,
-                                    },
-                                    `description_${singleForm.descriptionPlacement}`,
-                                    `${singleForm.labelPlacement}`
-                                )}
-                                id={`gform_fields_${id}`}
-                            >
-                                <FieldBuilder
-                                    formLoading={formLoading}
-                                    setFormLoading={setLoadingState}
-                                    controls={controls}
-                                    errors={errors}
-                                    formData={singleForm}
-                                    formId={typeof id === "number" ? id.toString() : id}
-                                    presetValues={presetValues}
-                                    register={register}
-                                    setValue={setValue}
-                                    onChange={onChange}
-                                    options={options}
-                                    recaptchaRef={recaptchaRef}
-                                    captchaKey={captchaKey}
-                                    countryList={countryList}
-                                />
-                            </ul>
-                        </div>
-
-                        <div
-                            className={`gform_footer ${singleForm.labelPlacement}`}
+                    <FormProvider {...methods} >
+                        <form
+                            className={
+                                formLoading
+                                    ? `gravityform gravityform--loading gravityform--id-${id}`
+                                    : `gravityform gravityform--id-${id}`
+                            }
+                            //TODO: ID change go GF standard "gfrom_1"?
+                            id={`gravityform--id-${id}`}
+                            key={`gravityform--id-${id}`}
+                            onSubmit={methods.handleSubmit(onSubmitCallback)}
+                            encType={isMultipart ? "multipart/form-data" : null}
                         >
-                            <button
-                                className="gravityform__button gform_button button"
-                                id={`gform_submit_button_${id}`}
-                                type="submit"
-                                disabled={isSubmitted ? !isDirty : !isDirty || !isValid }
+                            {generalError && (
+                                <FormGeneralError errorCode={generalError} />
+                            )}
+                            <div className="gform_body">
+                                <ul
+                                    className={classnames(
+                                        'gform_fields',
+                                        {
+                                            [`form_sublabel_${singleForm.subLabelPlacement}`]: singleForm.subLabelPlacement,
+                                        },
+                                        `description_${singleForm.descriptionPlacement}`,
+                                        `${singleForm.labelPlacement}`
+                                    )}
+                                    id={`gform_fields_${id}`}
+                                >
+                                    <FieldBuilder
+                                        formLoading={formLoading}
+                                        setFormLoading={setLoadingState}
+                                        controls={controls}
+                                        errors={errors}
+                                        formData={singleForm}
+                                        formId={typeof id === "number" ? id.toString() : id}
+                                        presetValues={presetValues}
+                                        register={methods.register}
+                                        setValue={methods.setValue}
+                                        onChange={onChange}
+                                        options={options}
+                                        recaptchaRef={recaptchaRef}
+                                        captchaKey={captchaKey}
+                                        countryList={countryList}
+                                    />
+                                </ul>
+                            </div>
+
+                            <div
+                                className={`gform_footer ${singleForm.labelPlacement}`}
                             >
-                                {formLoading ? (
-                                    <span className="gravityform__button__loading_span">
-                                        Loading
-                                    </span>
-                                ) : (
-                                    singleForm?.button?.text || 'Submit'
-                                )}
-                            </button>
-                        </div>
-                    </form>
+                                {!isValid && <p className="inactive-btn-msg">Please complete all required (<span>*</span>) fields and correct any error(s) above.</p>}
+                                <button
+                                    className="gravityform__button gform_button button"
+                                    id={`gform_submit_button_${id}`}
+                                    type="submit"
+                                    disabled={isSubmitted ? !isDirty : !isDirty || !isValid }
+                                >
+                                    {formLoading ? (
+                                        <span className="gravityform__button__loading_span">
+                                            Loading
+                                        </span>
+                                    ) : (
+                                        singleForm?.button?.text || 'Submit'
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </FormProvider>
                 )}
             </div>
         )

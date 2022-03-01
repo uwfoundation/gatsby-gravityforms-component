@@ -3,17 +3,20 @@ import PropTypes from 'prop-types'
 import React, { useState, useEffect } from 'react'
 import InputWrapper from '../../components/InputWrapper'
 import strings from '../../utils/strings'
+import { useFormContext } from "react-hook-form";
 
 const Textarea = ({
-    errors,
     fieldData,
     name,
-    register,
     value,
     wrapClassName,
     wrapId,
     fieldHidden
 }) => {
+    const {
+        register,
+        formState: { errors },
+      } = useFormContext();
     const {
         cssClass,
         inputMaskValue,
@@ -69,7 +72,7 @@ const Textarea = ({
                 name={name}
                 placeholder={placeholder}
                 onChange={e => updateOnChangeValues(e)}
-                ref={register({
+                {...register(name, {
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxlength: {
                         value: maxLength > 0 && maxLength,

@@ -4,8 +4,9 @@ import React, {useState} from 'react'
 import InputWrapper from '../InputWrapper'
 import Input from '../Input'
 import InputSubfieldWrapper from '../InputSubfieldWrapper'
+import { useFormContext } from "react-hook-form";
 
-const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handleFieldChange, onChange, countryList, ...wrapProps }) => {
+const Address = ({  fieldData, name, value, fieldHidden, handleFieldChange, onChange, countryList, ...wrapProps }) => {
     
     const {
         cssClass,
@@ -16,6 +17,8 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
         size,
         inputs,
     } = fieldData
+
+  const { register, errors } = useFormContext();
     
     const countryOptions = countryList && countryList.length > 0 ? countryList?.map(country => {
         return <option value={country.value} key={country.value} defaultValue="US">{country.label}</option>
@@ -81,11 +84,11 @@ const Address = ({ errors, fieldData, name,  register, value, fieldHidden, handl
                     key={subfield.label}
                 > 
                     <select 
-                        name={typeof subfield.id === "string" ? `input_${subfield.id.replace(".", "_")}` : `input_${subfield.id.toString().replace(".", "_")}`}
+                        name={inputName}
                         /*onChange={e => updateOnChangeValues(e)}*/
                         onBlur={(e) => handleBothOnChangeCalls(e)} 
                         defaultValue="US"
-                        ref={register({
+                        {...register(inputName, {
                         })}
                         >
                         {countryOptions}

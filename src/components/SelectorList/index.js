@@ -4,11 +4,16 @@ import React, { useRef, useLayoutEffect, useEffect } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import strings from '../../utils/strings'
 import InputWrapper from '../InputWrapper'
+import { useFormContext } from 'react-hook-form'
 
 // TODO: Enable Select All Choice
-const SelectorList = ({ errors, fieldData, name, register, onChange, handleFieldChange, fieldHidden, ...wrapProps }) => {
+const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidden, ...wrapProps }) => {
     const { choices, cssClass, isRequired, size, type } = fieldData
     const options = typeof choices === "string" ? JSON.parse(choices) : JSON.parse(JSON.stringify(choices))
+    const {
+        register,
+        formState: { errors },
+      } = useFormContext();
 
     const prev = useRef();
     useEffect(() => {
@@ -72,8 +77,8 @@ const SelectorList = ({ errors, fieldData, name, register, onChange, handleField
                                 )}
                                 defaultChecked={isSelected}
                                 id={`${name}_${choiceID}`}
-                                name={name}
-                                ref={register({
+                                name={`${name}_${choiceID}`}
+                                {...register(`${name}_${choiceID}`, {
                                     required:!fieldHidden ? isRequired && strings.errors.required : false,
                                 })}
                                 type={type}

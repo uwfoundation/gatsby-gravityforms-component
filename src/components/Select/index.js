@@ -2,9 +2,11 @@ import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
 import InputWrapper from '../../components/InputWrapper'
+import { useFormContext } from "react-hook-form";
 
-const Select = ({ errors, fieldData, name, handleFieldChange, onChange, setValue, register, options, ...wrapProps }) => {
+const Select = ({ fieldData, name, handleFieldChange, onChange, options, ...wrapProps }) => {
     const { choices, cssClass, isRequired, size, placeholder } = fieldData
+    const { register, formState: { errors }, setValue } = useFormContext();
     
     const handleBothOnChangeCalls = (e) => {
         //onChange(fieldData, value, choiceID)
@@ -71,7 +73,7 @@ const Select = ({ errors, fieldData, name, handleFieldChange, onChange, setValue
                 id={name}
                 name={name}
                 onChange={(e) => handleBothOnChangeCalls(e)}
-                ref={register({
+                {...register(name, {
                     required: isRequired && 'This field is required',
                     validate: {
                         validOption: (value) => isRequired && !param ? value !== placeholder : true,
