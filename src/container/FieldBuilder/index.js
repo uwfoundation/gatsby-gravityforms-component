@@ -13,6 +13,7 @@ import Select from '../../components/Select'
 import SelectorList from '../../components/SelectorList'
 import Textarea from '../../components/Textarea'
 import { ifDefaultValue, islabelHidden } from '../../utils/inputSettings'
+import { useFormContext } from 'react-hook-form'
 
 const FieldBuilder = ({
     formData,
@@ -29,6 +30,9 @@ const FieldBuilder = ({
 }) => {
     const formFields = formData?.formFields?.length ? formData?.formFields : formData?.formFields?.nodes ? formData?.formFields?.nodes : formData[0].node.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     formFields.forEach(field => field.type = field.type.toLowerCase())
+    const {
+        getValues,
+      } = useFormContext();
 
     const [fieldValues, setfieldValues] = useState({});
 
@@ -156,15 +160,16 @@ const FieldBuilder = ({
           return (<InputWrapper inputData={fieldData} labelFor={inputName} {...componentProps}>{React.cloneElement(controls[field.type], componentProps)}</InputWrapper>)
         }
 
+        let currentVals = getValues()
         //CONDITIONAL LOGIC
         const conditionalLogic = field?.conditionalLogic && typeof field.conditionalLogic === "string" ? JSON.parse(field.conditionalLogic) : field?.conditionalLogic && typeof field.conditionalLogic !== "string" ? JSON.parse(JSON.stringify(field.conditionalLogic)) : null
         const handleConditionalLogic = (field) => {
             const rulesMet = !(field?.conditionalLogic) || !(conditionalLogic?.rules)
                 ? null
                 : conditionalLogic.rules.map(rule => {
-                let conditionalValue = fieldValues[rule.fieldId]
+                let conditionalValue = currentVals[`input_${rule.fieldId}`] || fieldValues[rule.fieldId] || fieldValues
 
-                if (typeof conditionalValue === 'object') {
+                if (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length) {
                     let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId][key] === rule.value)
                     conditionalValue = matchKey && fieldValues[rule.fieldId][matchKey] ? fieldValues[rule.fieldId][matchKey] : false
                 }

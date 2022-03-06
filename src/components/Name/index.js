@@ -56,12 +56,9 @@ const Name = ({  fieldData, name, value, fieldHidden, ...wrapProps }) => {
         const inputName = `input_${subfield.id.replace(".", "_")}`
         
         return (<Input subfield
-            errors={errors[inputName]}
             fieldData={subfield.subfieldData}
             key={subfield.id}
             name={inputName}
-            register={subfield.register}
-            //value={value}
             fieldHidden={fieldHidden}
             fromNameField
         />)

@@ -71,7 +71,6 @@ const Textarea = ({
                 maxLength={maxLength > 0 ? maxLength : 1000}
                 name={name}
                 placeholder={placeholder}
-                onChange={e => updateOnChangeValues(e)}
                 {...register(name, {
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxlength: {
@@ -84,6 +83,7 @@ const Textarea = ({
                         value: regex,
                         message: regex && strings.errors.pattern,
                     },
+                    onChange: (e) => updateOnChangeValues(e),
                 })}
                 type={type}
             />

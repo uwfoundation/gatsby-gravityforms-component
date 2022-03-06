@@ -2,7 +2,6 @@ import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React, { useRef, useLayoutEffect, useEffect } from 'react'
 import ReactHtmlParser from 'react-html-parser'
-import strings from '../../utils/strings'
 import InputWrapper from '../InputWrapper'
 import { useFormContext } from 'react-hook-form'
 
@@ -12,6 +11,9 @@ const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidde
     const options = typeof choices === "string" ? JSON.parse(choices) : JSON.parse(JSON.stringify(choices))
     const {
         register,
+        getValues,
+        setValue,
+        resetField,
         formState: { errors },
       } = useFormContext();
 
@@ -19,6 +21,18 @@ const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidde
     useEffect(() => {
         prev.current = fieldHidden
     });
+    
+    //if fieldHidden changes(conditional logic hide/show based on another field), add default/isSelected value if there is one
+    //might be able to use react-form-hooks register prop instead of this?
+    useEffect(() => {
+        console.log(fieldHidden, name)
+        if(options && !fieldHidden ){
+            options.map(({ isSelected, value }) => isSelected ? setValue(name, value) : '', { shouldTouch: true });
+        } else if(fieldHidden){
+            resetField(name)
+        }
+
+    }, [fieldHidden]);
 
     const fieldHiddenClass = fieldHidden === true ? 'gform_hidden' : ''
 
@@ -36,6 +50,9 @@ const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidde
         return;
         }
     });
+
+    const atLeastOne = () =>
+        getValues(name)?.length ? true : "This field is required.";
 
     return (
         <InputWrapper
@@ -75,15 +92,14 @@ const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidde
                                     size,
                                     fieldHiddenClass
                                 )}
-                                defaultChecked={isSelected}
+                                defaultChecked={!fieldHidden && isSelected}
                                 id={`${name}_${choiceID}`}
-                                name={`${name}_${choiceID}`}
-                                {...register(`${name}_${choiceID}`, {
-                                    required:!fieldHidden ? isRequired && strings.errors.required : false,
+                                {...register(`${name}`, {
+                                    validate: !fieldHidden && isRequired ? atLeastOne : true,
+                                    onChange:() => handleBothOnChangeCalls(fieldData.id, value, newSubmitId ? newSubmitId : choiceID),
                                 })}
                                 type={type}
                                 value={value}
-                                onChange={() => handleBothOnChangeCalls(fieldData.id, value, newSubmitId ? newSubmitId : choiceID)}
                             />
                             &nbsp;
                             <label htmlFor={`${name}_${choiceID}`}>

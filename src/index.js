@@ -76,22 +76,46 @@ const GravityFormForm = ({
             if (submissionHasOneFieldEntry(values)) {
                 setLoadingState(true)
 
+                //check formData for checkbox fields and make an array
+                const checkboxFields = []
+                const formFieldsToCheck = singleForm?.formFields?.nodes || singleForm?.formFields
+                formFieldsToCheck.map(field => {
+                    if(field.type.toLowerCase() === "checkbox" ){
+                        checkboxFields.push(`input_${field.id}`)
+                    }
+                })
+
+                //catch and handle null radio inputs when no choice is made as well as undefined fields from react-hook-forms
+                Object.keys(values).forEach(key =>{
+                    if(values[key] === null || values[key] === undefined ){
+                        values[key] = ''
+                    } else if(checkboxFields.includes(key)){
+                        //reformat checkbox data for gravity forms to consume
+                        if(Array.isArray(values[key])){
+                            const arraytoUpdate = values[key]
+                            let newobj = {}
+                            let count = 1
+                            arraytoUpdate.forEach(value => {
+                                newobj[`${key}_${count}`] = value
+                                count = count + 1
+                            })
+                            values = {...values, ...newobj}
+                            delete values[key]
+                        } else if(typeof values[key] === 'string'){
+                            //if it's a single checkbox, it comes through as a string
+                            let newVal = {}
+                            newVal[`${key}_1`] = values[key]
+                            values = {...values, ...newVal}
+                            delete values[key]
+                        }
+
+                    }
+                })
+
                 if(Object.keys(values).includes('g-recaptcha-response')){
                     const token = await recaptchaRef.current.executeAsync();
                     values['g-recaptcha-response'] = token
                 }
-
-
-                if(Object.keys(checkboxes).length > 0){
-                    values = {...values, ...checkboxes}
-                }
-                
-                //catch and handle null radio inputs when no choice is made
-                Object.keys(values).forEach(key =>{
-                    if(values[key] === null ){
-                        values[key] = ''
-                    }
-                })
 
                 function checkForPhoneInput( myArray){
                     for (var i=0; i < myArray.length; i++) {
@@ -100,6 +124,7 @@ const GravityFormForm = ({
                         }
                     }
                 }
+                //clean up PhoneInput data
                 if((singleForm && singleForm?.formFields) || (singleForm && singleForm?.formFields?.nodes)){
                     if(checkForPhoneInput(singleForm?.formFields) || checkForPhoneInput(singleForm?.formFields?.nodes)){
                         Object.keys(values).forEach(key =>{
