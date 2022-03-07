@@ -2,7 +2,7 @@
   "name": "gatsby-gravityforms-component",
   "version": "3.1.0",
   "description": "A component to take gatsby-source-gravityforms query data and return a usable form.",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "babel src --out-dir ./dist --ignore **/__tests__",
     "prepare": "cross-env NODE_ENV=production npm run build",
