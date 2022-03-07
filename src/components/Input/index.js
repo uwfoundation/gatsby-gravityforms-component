@@ -22,7 +22,7 @@ const standardType = (type) => {
     }
 }
 
-const Input = ({ fieldData, name, register, value, fieldHidden, subfield, fromNameField, ...wrapProps }) => {
+const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, ...wrapProps }) => {
     const {
         cssClass,
         inputMaskValue,
@@ -38,7 +38,7 @@ const Input = ({ fieldData, name, register, value, fieldHidden, subfield, fromNa
     const [phoneValue, setPhoneValue] = useState();
     const [currentPageTitle, setCurrentPageTitle] = useState();
     let inputType = standardType(type)
-    const { formState, getValues, setValue, control } = useFormContext();
+    const { formState, getValues, setValue, control, register } = useFormContext();
     const { errors } = formState
 
     //check if things are loaded, component did mount
