@@ -25,7 +25,6 @@ const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidde
     //if fieldHidden changes(conditional logic hide/show based on another field), add default/isSelected value if there is one
     //might be able to use react-form-hooks register prop instead of this?
     useEffect(() => {
-        console.log(fieldHidden, name)
         if(options && !fieldHidden ){
             options.map(({ isSelected, value }) => isSelected ? setValue(name, value) : '', { shouldTouch: true });
         } else if(fieldHidden){
