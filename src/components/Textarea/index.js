@@ -49,7 +49,7 @@ const Textarea = ({
 
     return (
         <InputWrapper
-            errors={errors}
+            errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
             wrapClassName={wrapClassName}
