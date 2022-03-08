@@ -91,14 +91,6 @@ const InputWrapper = ({
                     This field is required, please select an option.
                 </div>
             )}
-            {errors && errors.type === "validate" && type === "phone" && (
-                <div
-                    aria-live="polite"
-                    className="gravityform__error_message gfield_description validation_message"
-                >
-                    Please enter a valid phone number.
-                </div>
-            )}
         </li>
     )
 }

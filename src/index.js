@@ -38,7 +38,7 @@ const GravityFormForm = ({
     countryList
 }) => {
     // Pull in form functions
-    const methods = useForm({mode : 'onChange',});
+    const methods = useForm({mode : 'onChange', reValidateMode: 'onSubmit'});
     const {
       handleSubmit,
       setError,

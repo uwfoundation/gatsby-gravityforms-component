@@ -39,7 +39,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
     const [phoneValue, setPhoneValue] = useState();
     const [currentPageTitle, setCurrentPageTitle] = useState();
     let inputType = standardType(type)
-    const { formState, getValues, setValue, control, register } = useFormContext();
+    const { formState, getValues, setValue, control, register, setError } = useFormContext();
     const { errors } = formState
 
     //check if things are loaded, component did mount
@@ -158,7 +158,10 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
                   onChange={setPhoneValue}
                   rules={{
                       required: !fieldHidden ? isRequired : false,
-                      validate: isPossiblePhoneNumber,
+                      onBlur: (e) => isPossiblePhoneNumber(String(e.target.value)) ? null : setError(name, {
+                        type: "validate",
+                        message: "Please provide a valid phone number.",
+                      }),
                   }}
                   />) 
                   : (<input
