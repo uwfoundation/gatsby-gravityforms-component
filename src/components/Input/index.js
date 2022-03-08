@@ -158,10 +158,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
                   onChange={setPhoneValue}
                   rules={{
                       required: !fieldHidden ? isRequired : false,
-                      onBlur: (e) => isPossiblePhoneNumber(String(e.target.value)) ? null : setError(name, {
-                        type: "validate",
-                        message: "Please provide a valid phone number.",
-                      }),
+                      validate: (e) => isPossiblePhoneNumber(String(e)),
                   }}
                   />) 
                   : (<input
