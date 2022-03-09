@@ -6,7 +6,6 @@ import InputWrapper from '../InputWrapper'
 import InputSubfieldWrapper from '../InputSubfieldWrapper'
 import 'react-phone-number-input/style.css'
 import PhoneInputWithCountry from 'react-phone-number-input/react-hook-form'
-import { isPossiblePhoneNumber } from 'react-phone-number-input'
 import { useFormContext } from 'react-hook-form'
 
 const standardType = (type) => {
@@ -158,7 +157,6 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
                   onChange={setPhoneValue}
                   rules={{
                       required: !fieldHidden ? isRequired : false,
-                      validate: (e) => isPossiblePhoneNumber(String(e)),
                   }}
                   />) 
                   : (<input
