@@ -100,7 +100,7 @@ const Address = ({  fieldData, name, value, fieldHidden, handleFieldChange, onCh
                 errors={errors?.inputName}
                 fieldData={subfield.subfieldData}
                 key={subfield.id}
-                name={subfield.label}
+                name={inputName}
                 register={subfield.register}
                 fieldHidden={fieldHidden}
             />)
