@@ -169,9 +169,14 @@ const FieldBuilder = ({
                 : conditionalLogic.rules.map(rule => {
                 let conditionalValue = currentVals[`input_${rule.fieldId}`] || fieldValues[rule.fieldId] || fieldValues
 
-                if (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length) {
+                if (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length && !Array.isArray(conditionalValue)) {
                     let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId]?.key === rule.value)
                     conditionalValue = matchKey && fieldValues[rule.fieldId]?.matchKey ? fieldValues[rule.fieldId][matchKey] : false
+                } else if (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length && Array.isArray(conditionalValue)) {
+                    if (conditionalValue?.includes(rule.value)){
+                        let matchKey = conditionalValue.indexOf(rule.value)
+                        conditionalValue = conditionalValue ? conditionalValue[matchKey] : false
+                    }
                 }
                 
                 switch (rule.operator.toLowerCase()) {

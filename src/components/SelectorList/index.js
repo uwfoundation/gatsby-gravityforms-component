@@ -55,7 +55,7 @@ const SelectorList = ({ fieldData, name, onChange, handleFieldChange, fieldHidde
 
     return (
         <InputWrapper
-            errors={errors}
+            errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
             fieldHidden={fieldHidden}
