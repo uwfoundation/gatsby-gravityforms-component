@@ -32,6 +32,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
         size,
         type,
         id,
+        label,
     } = fieldData
     const regex = inputMaskValue ? new RegExp(inputMaskValue) : false
     const [defaultValue, setDefaultValue] = useState(null);
@@ -97,7 +98,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
         return hiddenValue !== null ? hiddenValue : value
     }
 
-    const isAddressLineTwo = name && name === 'Address Line 2' ? true : false
+    const isAddressLineTwo = (name && name === 'Address Line 2') || (label && label === 'Address Line 2')
     const inputName = id && typeof id === 'string' ? `input_${id.replace(".", "_")}` : id ? id : name
     
     return (subfield) ? (<InputSubfieldWrapper
