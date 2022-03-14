@@ -193,7 +193,7 @@ const FieldBuilder = ({
                         return conditionalValue < rule.value
     
                     case 'contains':
-                        return typeof conditionalValue === 'object' || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
+                        return (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length) || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
     
                     case 'starts with':
                         return conditionalValue.indexOf(rule.value) === 0
