@@ -102,7 +102,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
     const inputName = id && typeof id === 'string' ? `input_${id.replace(".", "_")}` : id ? id : name
     
     return (subfield) ? (<InputSubfieldWrapper
-        errors={errors[inputName]}
+        errors={errors[name || inputName]}
         inputData={fieldData}
         labelFor={name}
         fieldHidden={fieldHidden}

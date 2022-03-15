@@ -97,7 +97,6 @@ const Address = ({  fieldData, name, value, fieldHidden, handleFieldChange, onCh
             )
         } else{
             return (<Input subfield
-                errors={errors?.inputName}
                 fieldData={subfield.subfieldData}
                 key={subfield.id}
                 name={inputName}
