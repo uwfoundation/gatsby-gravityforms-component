@@ -93,7 +93,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
         
         const param = paramToCheck && queryToCheck ? queryToCheck.get(paramToCheck) : null;
         
-        let hiddenValue = checkForPageTitle ? currentPageTitle : param && param.match(/^[0-9a-zA-Z _%-]+$/)? param : ''; //if defaultValue exists, set to defaultvalue, otherwise, check if param exists in query - returns empty string if it does not
+        let hiddenValue = checkForPageTitle ? currentPageTitle : param && param.match(/^[0-9a-zA-Z _%@.-]+$/)? param : ''; //if defaultValue exists, set to defaultvalue, otherwise, check if param exists in query - returns empty string if it does not
         
         return hiddenValue !== null ? hiddenValue : value
     }
