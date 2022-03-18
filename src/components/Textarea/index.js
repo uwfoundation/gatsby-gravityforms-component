@@ -23,11 +23,11 @@ const Textarea = ({
         size,
         type,
     } = fieldData
-    const [textareaCharLeft, setCharLeft ] = useState(1000)
+    const [textareaCharLeft, setCharLeft ] = useState(5000)
     
     const regex = inputMaskValue ? new RegExp(inputMaskValue) : false
-    let charactersLeft = maxLength ? maxLength : 1000
-    let maxChar = maxLength ? maxLength : 1000
+    let charactersLeft = maxLength ? maxLength : 5000
+    let maxChar = maxLength ? maxLength : 5000
     useEffect(() => {
         setCharLeft(charactersLeft)
     }, [charactersLeft]);
