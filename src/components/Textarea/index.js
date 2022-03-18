@@ -65,7 +65,7 @@ const Textarea = ({
                 )}
                 defaultValue={value}
                 id={name}
-                maxLength={maxLength > 0 ? maxLength : 1000}
+                maxLength={maxLength > 0 ? maxLength : 5000}
                 name={name}
                 placeholder={placeholder}
                 onChange={e => updateOnChangeValues(e)}
