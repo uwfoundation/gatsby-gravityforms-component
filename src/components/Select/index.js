@@ -72,12 +72,12 @@ const Select = ({ fieldData, name, handleFieldChange, onChange, options, ...wrap
                 )}
                 id={name}
                 name={name}
-                onChange={(e) => handleBothOnChangeCalls(e)}
                 {...register(name, {
                     required: isRequired && 'This field is required',
                     validate: {
                         validOption: (value) => isRequired && !param ? value !== placeholder : true,
                     },
+                    onChange: (e) => handleBothOnChangeCalls(e),
                 })}
             >
                 {selectChoices.map(({ text, value }, index) => {
