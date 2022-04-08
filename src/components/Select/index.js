@@ -54,7 +54,7 @@ const Select = ({ fieldData, name, handleFieldChange, onChange, options, ...wrap
 
     return (
             <InputWrapper
-            errors={errors}
+            errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
             {...wrapProps}
