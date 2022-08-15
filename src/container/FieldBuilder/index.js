@@ -33,6 +33,13 @@ const FieldBuilder = ({
     const formFields = formData?.formFields?.length ? formData?.formFields : formData?.formFields?.nodes ? formData?.formFields?.nodes : formData[0].node.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     formFields.forEach(field => field.type = field.type.toLowerCase())
 
+    //find and replace ampersand html entitites from graphql plugin data
+    Object.keys(formFields).forEach(key =>{
+        if( typeof values[key] === 'string' ){
+            values[key] = values[key].replace('&amp;', '&')
+        }
+    })
+
     const [fieldValues, setfieldValues] = useState({});
     useEffect(() => {
         formFields.forEach(field => {
