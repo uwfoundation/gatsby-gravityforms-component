@@ -35,8 +35,8 @@ const FieldBuilder = ({
 
     //find and replace ampersand html entitites from graphql plugin data
     Object.keys(formFields).forEach(key =>{
-        if( typeof values[key] === 'string' ){
-            values[key] = values[key].replace('&amp;', '&')
+        if( typeof formFields[key] === 'string' ){
+            formFields[key] = formFields[key].replace('&amp;', '&')
         }
     })
 
