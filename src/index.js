@@ -154,7 +154,11 @@ const GravityFormForm = ({
                 }
 
                 if (status === 'success') {
-                    const { confirmation_message } = data?.data
+                    const { confirmation_message, confirmation_type, confirmation_redirect } = data?.data
+
+                    if( confirmation_type === "redirect" && confirmation_redirect){
+                        window.location.href = confirmation_redirect;
+                    }
 
                     const { confirmations } = singleForm
 
