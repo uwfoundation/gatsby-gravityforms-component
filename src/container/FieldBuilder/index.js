@@ -34,11 +34,18 @@ const FieldBuilder = ({
     formFields.forEach(field => field.type = field.type.toLowerCase())
 
     //find and replace ampersand html entitites from graphql plugin data
-    Object.keys(formFields).forEach(key =>{
-        if( typeof formFields[key] === 'string' ){
-            formFields[key] = formFields[key].replace('&amp;', '&')
-        }
-    })
+    const cleanupFields = (obj) => {
+        Object.keys(obj).forEach(key => {
+            if( typeof obj[key] === 'string' ){
+                obj[key] = obj[key].replace('&amp;', '&')
+            }
+    
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+            cleanupFields(obj[key])
+            }
+        })
+    }
+    cleanupFields(formFields);
 
     const [fieldValues, setfieldValues] = useState({});
     useEffect(() => {
