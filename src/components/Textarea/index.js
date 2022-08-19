@@ -3,17 +3,20 @@ import PropTypes from 'prop-types'
 import React, { useState, useEffect } from 'react'
 import InputWrapper from '../../components/InputWrapper'
 import strings from '../../utils/strings'
+import { useFormContext } from "react-hook-form";
 
 const Textarea = ({
-    errors,
     fieldData,
     name,
-    register,
     value,
     wrapClassName,
     wrapId,
     fieldHidden
 }) => {
+    const {
+        register,
+        formState: { errors },
+      } = useFormContext();
     const {
         cssClass,
         inputMaskValue,
@@ -46,7 +49,7 @@ const Textarea = ({
 
     return (
         <InputWrapper
-            errors={errors}
+            errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
             wrapClassName={wrapClassName}
@@ -68,8 +71,7 @@ const Textarea = ({
                 maxLength={maxLength > 0 ? maxLength : 5000}
                 name={name}
                 placeholder={placeholder}
-                onChange={e => updateOnChangeValues(e)}
-                ref={register({
+                {...register(name, {
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxlength: {
                         value: maxLength > 0 && maxLength,
@@ -81,6 +83,7 @@ const Textarea = ({
                         value: regex,
                         message: regex && strings.errors.pattern,
                     },
+                    onChange: (e) => updateOnChangeValues(e),
                 })}
                 type={type}
             />

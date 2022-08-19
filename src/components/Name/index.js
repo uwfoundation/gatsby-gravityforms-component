@@ -3,12 +3,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import InputWrapper from '../InputWrapper'
 import Input from '../Input'
+import { useFormContext } from "react-hook-form";
 
-const Name = ({ errors, fieldData, name, register, value, fieldHidden, ...wrapProps }) => {
-    //console.log('name', fieldData, name, value)
-    //console.log(inputs)
-    //console.log(value)
-    //console.log(register)
+const Name = ({  fieldData, name, value, fieldHidden, ...wrapProps }) => {
+    const { register, errors } = useFormContext();
     const {
         cssClass,
         inputMaskValue,
@@ -58,12 +56,9 @@ const Name = ({ errors, fieldData, name, register, value, fieldHidden, ...wrapPr
         const inputName = `input_${subfield.id.replace(".", "_")}`
         
         return (<Input subfield
-            errors={errors[inputName]}
             fieldData={subfield.subfieldData}
             key={subfield.id}
             name={inputName}
-            register={subfield.register}
-            //value={value}
             fieldHidden={fieldHidden}
             fromNameField
         />)

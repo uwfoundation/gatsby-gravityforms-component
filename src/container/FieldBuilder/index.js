@@ -12,15 +12,13 @@ import Name from '../../components/Name'
 import Select from '../../components/Select'
 import SelectorList from '../../components/SelectorList'
 import Textarea from '../../components/Textarea'
-import { filteredKeys } from '../../utils/helpers'
 import { ifDefaultValue, islabelHidden } from '../../utils/inputSettings'
+import { useFormContext } from 'react-hook-form'
 
 const FieldBuilder = ({
     formData,
     presetValues = {},
     register,
-    errors,
-    setValue,
     controls = {},
     formLoading,
     setFormLoading,
@@ -32,6 +30,9 @@ const FieldBuilder = ({
 }) => {
     const formFields = formData?.formFields?.length ? formData?.formFields : formData?.formFields?.nodes ? formData?.formFields?.nodes : formData[0].node.formFields.nodes //data is slightly different coming from API vs wpgraphql plugin
     formFields.forEach(field => field.type = field.type.toLowerCase())
+    const {
+        getValues,
+      } = useFormContext();
 
     //find and replace ampersand html entitites from graphql plugin data
     const cleanupFields = (obj) => {
@@ -48,6 +49,7 @@ const FieldBuilder = ({
     cleanupFields(formFields);
 
     const [fieldValues, setfieldValues] = useState({});
+
     useEffect(() => {
         formFields.forEach(field => {
             if(field.type === 'radio' || field.type === 'checkbox'){
@@ -154,7 +156,6 @@ const FieldBuilder = ({
         const inputName = `input_${field.id}`
 
         const componentProps = {
-            errors: errors[inputName],
             formLoading: formLoading,
             setFormLoading: setFormLoading,
             fieldData: fieldData,
@@ -169,22 +170,27 @@ const FieldBuilder = ({
             wrapId: wrapId,
         }
 
-        let errorKey = ''
         if (controls[field.type]) {
           return (<InputWrapper inputData={fieldData} labelFor={inputName} {...componentProps}>{React.cloneElement(controls[field.type], componentProps)}</InputWrapper>)
         }
 
+        let currentVals = getValues()
         //CONDITIONAL LOGIC
         const conditionalLogic = field?.conditionalLogic && typeof field.conditionalLogic === "string" ? JSON.parse(field.conditionalLogic) : field?.conditionalLogic && typeof field.conditionalLogic !== "string" ? JSON.parse(JSON.stringify(field.conditionalLogic)) : null
         const handleConditionalLogic = (field) => {
             const rulesMet = !(field?.conditionalLogic) || !(conditionalLogic?.rules)
                 ? null
                 : conditionalLogic.rules.map(rule => {
-                let conditionalValue = fieldValues[rule.fieldId]
+                let conditionalValue = currentVals[`input_${rule.fieldId}`] || fieldValues[rule.fieldId] || fieldValues
 
-                if (typeof conditionalValue === 'object') {
-                    let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId][key] === rule.value)
-                    conditionalValue = matchKey && fieldValues[rule.fieldId][matchKey] ? fieldValues[rule.fieldId][matchKey] : false
+                if (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length && !Array.isArray(conditionalValue)) {
+                    let matchKey = Object.keys(conditionalValue).filter(key => fieldValues[rule.fieldId]?.key === rule.value)
+                    conditionalValue = matchKey && fieldValues[rule.fieldId]?.matchKey ? fieldValues[rule.fieldId][matchKey] : false
+                } else if (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length && Array.isArray(conditionalValue)) {
+                    if (conditionalValue?.includes(rule.value)){
+                        let matchKey = conditionalValue.indexOf(rule.value)
+                        conditionalValue = conditionalValue ? conditionalValue[matchKey] : false
+                    }
                 }
                 
                 switch (rule.operator.toLowerCase()) {
@@ -201,7 +207,7 @@ const FieldBuilder = ({
                         return conditionalValue < rule.value
     
                     case 'contains':
-                        return typeof conditionalValue === 'object' || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
+                        return (typeof conditionalValue === 'object' && Object.keys(conditionalValue).length) || typeof conditionalValue === 'string' ? conditionalValue.indexOf(rule.value) >= 0 : false
     
                     case 'starts with':
                         return conditionalValue.indexOf(rule.value) === 0
@@ -240,12 +246,9 @@ const FieldBuilder = ({
                 return (
                     <Captcha
                         captchaTheme={field.captchaTheme}
-                        errors={errors[`input_${field.id}`]}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
-                        setValue={setValue}
                         wrapClassName={inputWrapperClass}
                         recaptchaRef={recaptchaRef}
                         captchaKey={captchaKey}
@@ -265,11 +268,9 @@ const FieldBuilder = ({
             case 'post_custom_field':
                 return (
                     <Input
-                        errors={errors[inputName]}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         value={
                             get(presetValues, inputName, false)
                                 ? get(presetValues, inputName, false)
@@ -284,11 +285,9 @@ const FieldBuilder = ({
             case 'post_content':
                 return (
                     <Textarea
-                        errors={errors[inputName]}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
                         fieldHidden={fieldHidden(field)}
@@ -297,44 +296,34 @@ const FieldBuilder = ({
             case 'select':
                 return (
                     <Select
-                        errors={errors[inputName]}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
                         handleFieldChange={handleFieldChange}
                         onChange={onChange}
                         fieldHidden={fieldHidden(field)}
                         options={options}
-                        setValue={setValue}
                     />
                 )
             case 'multiselect':
                 return (
                     <Multiselect
-                        errors={errors[inputName]}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
                     />
                 )
             case 'radio':
             case 'checkbox':
-                errorKey = filteredKeys(errors, RegExp(`input_${field.id}_`))
                 return (
                     <SelectorList
-                        errors={
-                            errorKey.length > 0 ? errors[errorKey[0]] : null
-                        }
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         wrapClassName={inputWrapperClass}
                         wrapId={wrapId}
                         onChange={onChange}
@@ -345,11 +334,9 @@ const FieldBuilder = ({
             case 'name':
                 return (
                     <Name
-                        errors={errors}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         value={
                             get(presetValues, inputName, false)
                                 ? get(presetValues, inputName, false)
@@ -365,11 +352,9 @@ const FieldBuilder = ({
                 
                 return (
                     <Address
-                        errors={errors}
                         fieldData={fieldData}
                         key={field.id}
                         name={inputName}
-                        register={register}
                         value={
                             get(presetValues, inputName, false)
                                 ? get(presetValues, inputName, false)

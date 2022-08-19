@@ -2,8 +2,10 @@ import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
 import InputWrapper from '../../components/InputWrapper'
+import { useFormContext } from "react-hook-form";
 
-const Multiselect = ({ errors, fieldData, name, register, ...wrapProps }) => {
+const Multiselect = ({ fieldData, name, ...wrapProps }) => {
+    const { register, errors } = useFormContext();
     const { choices, cssClass, id, isRequired, size } = fieldData
     const options = JSON.parse(choices)
     return (
@@ -24,7 +26,7 @@ const Multiselect = ({ errors, fieldData, name, register, ...wrapProps }) => {
                 id={name}
                 multiple={true}
                 name={name}
-                ref={register({
+                {...register(name, {
                     required: isRequired,
                 })}
             >

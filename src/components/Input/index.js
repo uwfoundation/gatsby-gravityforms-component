@@ -5,7 +5,8 @@ import strings from '../../utils/strings'
 import InputWrapper from '../InputWrapper'
 import InputSubfieldWrapper from '../InputSubfieldWrapper'
 import 'react-phone-number-input/style.css'
-import PhoneInput from 'react-phone-number-input'
+import PhoneInputWithCountry from 'react-phone-number-input/react-hook-form'
+import { useFormContext } from 'react-hook-form'
 
 const standardType = (type) => {
     switch (type) {
@@ -21,7 +22,7 @@ const standardType = (type) => {
     }
 }
 
-const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield, fromNameField, ...wrapProps }) => {
+const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, ...wrapProps }) => {
     const {
         cssClass,
         inputMaskValue,
@@ -31,12 +32,15 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
         size,
         type,
         id,
+        label,
     } = fieldData
     const regex = inputMaskValue ? new RegExp(inputMaskValue) : false
     const [defaultValue, setDefaultValue] = useState(null);
     const [phoneValue, setPhoneValue] = useState();
     const [currentPageTitle, setCurrentPageTitle] = useState();
     let inputType = standardType(type)
+    const { formState, getValues, setValue, control, register, setError } = useFormContext();
+    const { errors } = formState
 
     //check if things are loaded, component did mount
     const firstUpdate = useRef(true);
@@ -48,9 +52,12 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
     });
 
     useEffect(() => {
-        setDefaultValue(updateDefaultValue())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [firstUpdate.current]);
+        const defaultV = updateDefaultValue()
+        const values = getValues();
+        if(!formState.touchedFields[`${name}`] && !values[`${name}`] && defaultV ){
+            setValue(name, defaultV, { shouldTouch: true });
+        }
+    }, [firstUpdate.current, setValue]);
     
     useEffect(() => {
         setTimeout(() => {
@@ -69,10 +76,10 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
     //add/update default value if using current or prev class
     useEffect(() => {
         if(cssClass && cssClass.includes("currentPageTitle") && currentPageTitle){
-            setDefaultValue(currentPageTitle)
+            setValue(name, currentPageTitle, { shouldTouch: true });
         }
         if(cssClass && cssClass.includes("prevPageTitle") && window?.localStorage?.prevpage_title){
-            setDefaultValue(window.localStorage.prevpage_title)
+            setValue(name, window.localStorage.prevpage_title, { shouldTouch: true });
         }
     }, [currentPageTitle, cssClass]);
     
@@ -86,16 +93,16 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
         
         const param = paramToCheck && queryToCheck ? queryToCheck.get(paramToCheck) : null;
         
-        let hiddenValue = checkForPageTitle ? currentPageTitle : param && param.match(/^[0-9a-zA-Z _%-]+$/)? param : null; //if defaultValue exists, set to defaultvalue, otherwise, check if param exists in query - returns null if it does not
+        let hiddenValue = checkForPageTitle ? currentPageTitle : param && param.match(/^[0-9a-zA-Z _%@.-]+$/)? param : ''; //if defaultValue exists, set to defaultvalue, otherwise, check if param exists in query - returns empty string if it does not
         
         return hiddenValue !== null ? hiddenValue : value
     }
 
-    const isAddressLineTwo = name && name === 'Address Line 2' ? true : false
+    const isAddressLineTwo = (name && name === 'Address Line 2') || (label && label === 'Address Line 2')
     const inputName = id && typeof id === 'string' ? `input_${id.replace(".", "_")}` : id ? id : name
     
     return (subfield) ? (<InputSubfieldWrapper
-        errors={errors}
+        errors={errors[name || inputName]}
         inputData={fieldData}
         labelFor={name}
         fieldHidden={fieldHidden}
@@ -109,12 +116,12 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
             cssClass,
             size
         )}
-        defaultValue={defaultValue}
         id={typeof id === "string" ? `input_${id.replace(".", "_")}` : `input_${id.toString().replace(".", "_")}`}
         maxLength={fromNameField ? 51 : maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
         name={typeof inputName === "string" ? inputName : `input_${inputName.toString().replace(".", "_")}`}
         placeholder={placeholder}
-        ref={register({
+        {...register(name, {
+            value: defaultValue,
             required: isRequired && strings.errors.required && !isAddressLineTwo,
             maxLength: fromNameField ? {
                 value: 50,
@@ -133,32 +140,26 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
         type={type === 'phone' ? 'tel' : type === 'fileupload' ? 'file' : type === 'website' ? 'url' : type}
     /></InputSubfieldWrapper>) : (
         <InputWrapper
-            errors={errors}
+            errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
             fieldHidden={fieldHidden}
             {...wrapProps}
         >
-            {type === 'phone' ? (<PhoneInput
-                  //placeholder="Enter phone number"
-                  type="phone"
+            {type === 'phone' ? (<PhoneInputWithCountry
                   name={name}
                   id={name}
                   maxLength="26"
                   defaultCountry="US"
-                  //remove duplicate calling code number if phone number is 13 characters and the frist and second value is 1
-                  value={phoneValue && phoneValue.length === 13 && phoneValue[1] === "1" && phoneValue[2] === "1" ? `+${phoneValue.substring(2)}` : phoneValue}
+                  control={control}
                   international={true}
                   limitMaxLength={true}
                   countryCallingCodeEditable={false}
                   onChange={setPhoneValue}
-                  ref={register({
-                    required: !fieldHidden ? isRequired && strings.errors.required : false,
-                    maxLength: {
-                        value: 25,
-                        message: 'Phone number must be 25 characters or less.',
-                    }
-                  })}/>) 
+                  rules={{
+                      required: !fieldHidden ? isRequired : false,
+                  }}
+                  />) 
                   : (<input
                 aria-invalid={errors}
                 aria-required={!fieldHidden ? isRequired : false}
@@ -168,12 +169,12 @@ const Input = ({ errors, fieldData, name, register, value, fieldHidden, subfield
                     cssClass,
                     size
                 )}
-                defaultValue={defaultValue}
                 id={name}
                 maxLength={type === 'phone' ? 26 : type === 'text' ? 256 : maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
                 name={name}
                 placeholder={placeholder}
-                ref={register({
+                {...register(name, {
+                    value: defaultValue,
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxLength: type === 'phone' ? {
                         value: 25,

@@ -2,7 +2,7 @@
   "name": "gatsby-gravityforms-component",
   "version": "3.1.0",
   "description": "A component to take gatsby-source-gravityforms query data and return a usable form.",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "babel src --out-dir ./dist --ignore **/__tests__",
     "prepare": "cross-env NODE_ENV=production npm run build",
@@ -37,8 +37,9 @@
     "oauth-signature": "^1.5.0",
     "prop-types": "^15.7.2",
     "react-google-recaptcha": "^2.1.0",
-    "react-hook-form": "^6.12.0",
+    "react-hook-form": "^7.34.2",
     "react-html-parser": "^2.0.2",
+    "react-phone-number-input": "^3.2.7",
     "sanitize-html": "^2.2.0"
   },
   "devDependencies": {
@@ -57,7 +58,7 @@
     "install-peers": "^1.0.3"
   },
   "peerDependencies": {
-    "gatsby": "^2.28.0",
+    "gatsby": "^4.1.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   }

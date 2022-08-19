@@ -75,6 +75,14 @@ const InputWrapper = ({
                     {errors.message}
                 </div>
             )}
+            {errors && !errors.message && errors.type === "required" && (
+                <div
+                    aria-live="polite"
+                    className="gravityform__error_message gfield_description validation_message"
+                >
+                    This field is required.
+                </div>
+            )}
             {errors && errors.type === "validOption" && (
                 <div
                     aria-live="polite"
