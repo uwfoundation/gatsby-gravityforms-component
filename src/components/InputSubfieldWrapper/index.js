@@ -1,6 +1,7 @@
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
+import ReactHtmlParser from 'react-html-parser'
 import { outputDescription } from '../../utils/inputSettings'
 
 const InputSubfieldWrapper = ({
@@ -75,7 +76,7 @@ const InputSubfieldWrapper = ({
                     aria-live="polite"
                     className="gravityform__error_message gfield_description validation_message"
                 >
-                    {errors?.type === "required" ? 'This field is required.' : errors.message}
+                    {errors?.type === "required" ? 'This field is required.' : ReactHtmlParser(errors.message)}
                 </div>
             )}
         </div>
