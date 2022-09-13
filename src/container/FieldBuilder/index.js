@@ -227,7 +227,7 @@ const FieldBuilder = ({
                     ? rulesMet && rulesMet.indexOf(false) >= 0 
                     : rulesMet && rulesMet.indexOf(true) < 0
             } else {
-                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase === 'all' 
+                return conditionalLogic?.logicType && conditionalLogic.logicType.toLowerCase() === 'all' 
                     ? rulesMet && rulesMet.indexOf(true) < 0 
                     : rulesMet && rulesMet.indexOf(false) >= 0
             }
