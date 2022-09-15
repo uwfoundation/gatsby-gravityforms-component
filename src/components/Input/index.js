@@ -87,14 +87,14 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
         const fieldValue = fieldData.inputName ? fieldData.inputName : null //if it's a hidden field, the parameter value is stored under inputName
         const adminField = fieldData?.visibility?.toLowerCase() === 'administrative' ? true : false
         const checkForPageTitle = adminField && fieldData.defaultValue === '{embed_post:post_title}' ? true : false //if it's a regular text field w/visibility set to admin, the value is stored under defaultValue
-        const actualDefaultField = fieldData?.defaultValue
+        const formDataDefaultField = fieldData?.defaultValue
 
         const paramToCheck = fieldValue && fieldValue !== '' ? fieldValue : null
         const queryToCheck = firstUpdate.current === false ? new URLSearchParams(document.location.search.substring(1)): null;
         
         const param = paramToCheck && queryToCheck ? queryToCheck.get(paramToCheck) : null;
         
-        let hiddenValue = actualDefaultField ? actualDefaultField : checkForPageTitle ? currentPageTitle : param && param.match(/^[0-9a-zA-Z _%@.-]+$/) ? param : ''; //if defaultValue exists, set to defaultvalue, otherwise, check if param exists in query - returns empty string if it does not
+        let hiddenValue = actualDefaultField && !adminField ? actualDefaultField : checkForPageTitle ? currentPageTitle : param && param.match(/^[0-9a-zA-Z _%@.-]+$/) ? param : ''; //if defaultValue exists, set to defaultvalue, otherwise, check if param exists in query - returns empty string if it does not
         
         return hiddenValue !== null ? hiddenValue : value
     }
