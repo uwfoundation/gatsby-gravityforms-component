@@ -122,7 +122,7 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
         placeholder={placeholder}
         {...register(name, {
             value: defaultValue,
-            required: isRequired && strings.errors.required && !isAddressLineTwo,
+            required: isRequired && !fieldHidden && strings.errors.required && !isAddressLineTwo,
             maxLength: fromNameField ? {
                 value: 50,
                 message: "Name must be less than 50 characters.",
