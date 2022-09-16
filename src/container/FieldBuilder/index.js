@@ -192,8 +192,9 @@ const FieldBuilder = ({
                         conditionalValue = conditionalValue ? conditionalValue[matchKey] : false
                     }
                 }
-                
-                switch (rule.operator.toLowerCase()) {
+
+                const operator = rule.operator.toLowerCase().replace('_', ' ')
+                switch (operator) {
                     case 'is':
                         return conditionalValue === rule.value
     
