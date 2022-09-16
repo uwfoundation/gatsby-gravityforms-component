@@ -27,7 +27,7 @@ const Multiselect = ({ fieldData, name, ...wrapProps }) => {
                 multiple={true}
                 name={name}
                 {...register(name, {
-                    required: !fieldHidden ? isRequired : false,
+                    required: isRequired,
                 })}
             >
                 {options.map(({ isSelected, text, value }, index) => {
