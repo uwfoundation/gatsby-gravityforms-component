@@ -173,7 +173,7 @@ const GravityFormForm = ({
                     }
 
                     errorCallback &&
-                        errorCallback({ values, error: data, reset })
+                        errorCallback({ id, values, error: data, reset })
                 }
 
                 if (status === 'success') {
