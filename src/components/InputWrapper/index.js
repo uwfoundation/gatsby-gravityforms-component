@@ -98,7 +98,7 @@ const InputWrapper = ({
 
 const maxLengthSentence = (length, type) => {
     let word = type === 'number' ? 'numbers' : 'characters'
-    return length && ` (maxiumum ${length} ${word})`
+    return length && ` (maximum ${length} ${word})`
 }
 
 export default InputWrapper
