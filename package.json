@@ -58,8 +58,8 @@
     "install-peers": "^1.0.3"
   },
   "peerDependencies": {
-    "gatsby": "^4.1.4",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "gatsby": "^5.6.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
