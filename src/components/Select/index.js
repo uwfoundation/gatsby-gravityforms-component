@@ -76,7 +76,7 @@ const Select = ({ fieldData, name, handleFieldChange, onChange, fieldHidden, opt
                 {...register(name, {
                     required: isRequired && !fieldHidden && 'This field is required',
                     validate: {
-                        validOption: (value) => isRequired && !param ? value !== placeholder : true,
+                        validOption: (value) => isRequired && !fieldHidden && !param ? value !== placeholder : true,
                     },
                     onChange: (e) => handleBothOnChangeCalls(e),
                 })}
