@@ -57,6 +57,7 @@ const Select = ({ fieldData, name, handleFieldChange, onChange, fieldHidden, opt
             errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
+            fieldHidden={fieldHidden}
             {...wrapProps}
         >
             <select
