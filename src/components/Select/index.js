@@ -4,7 +4,7 @@ import React, { useEffect } from 'react'
 import InputWrapper from '../../components/InputWrapper'
 import { useFormContext } from "react-hook-form";
 
-const Select = ({ fieldData, name, handleFieldChange, onChange, options, ...wrapProps }) => {
+const Select = ({ fieldData, name, handleFieldChange, onChange, fieldHidden, options, ...wrapProps }) => {
     const { choices, cssClass, isRequired, size, placeholder } = fieldData
     const { register, formState: { errors }, setValue } = useFormContext();
     
@@ -57,6 +57,7 @@ const Select = ({ fieldData, name, handleFieldChange, onChange, options, ...wrap
             errors={errors[name]}
             inputData={fieldData}
             labelFor={name}
+            fieldHidden={fieldHidden}
             {...wrapProps}
         >
             <select
@@ -73,9 +74,9 @@ const Select = ({ fieldData, name, handleFieldChange, onChange, options, ...wrap
                 id={name}
                 name={name}
                 {...register(name, {
-                    required: isRequired && 'This field is required',
+                    required: isRequired && !fieldHidden && 'This field is required',
                     validate: {
-                        validOption: (value) => isRequired && !param ? value !== placeholder : true,
+                        validOption: (value) => isRequired && !fieldHidden && !param ? value !== placeholder : true,
                     },
                     onChange: (e) => handleBothOnChangeCalls(e),
                 })}
