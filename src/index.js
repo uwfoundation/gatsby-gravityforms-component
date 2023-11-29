@@ -96,6 +96,14 @@ const GravityFormForm = ({
                             let newobj = {}
                             let count = 1
                             arraytoUpdate.forEach(value => {
+                                //check the index of choice in array of choices and use to submit with input number
+                                const fieldIdKey = parseInt(key.slice(6))
+                                Object.keys(formFieldsToCheck).forEach(fieldkey =>{
+                                    if(formFieldsToCheck[fieldkey]?.id === fieldIdKey ){
+                                        const inputNum = formFieldsToCheck[fieldkey]?.choices?.findIndex((x) => x.value === value)
+                                        count = inputNum + 1
+                                    }
+                                })
                                 newobj[`${key}_${count}`] = value
                                 count = count + 1
                             })
