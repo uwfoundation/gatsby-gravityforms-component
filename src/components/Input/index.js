@@ -127,8 +127,8 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
             maxLength: fromNameField ? {
                 value: 50,
                 message: "Name must be less than 50 characters.",
-            } : maxLength > 0 && maxLength ? {
-                value: maxLength > 0 && maxLength,
+            } : maxLength && maxLength > 0 ? {
+                value: maxLength && maxLength > 0 ,
                 message:
                     maxLength > 0 &&
                     `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
@@ -177,8 +177,8 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
                 {...register(name, {
                     value: defaultValue,
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
-                    maxLength: maxLength > 0 && maxLength ? {
-                        value: maxLength > 0 && maxLength,
+                    maxLength: maxLength && maxLength > 0 ? {
+                        value: maxLength && maxLength > 0 ,
                         message:
                             maxLength > 0 &&
                             `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
