@@ -178,10 +178,8 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
                     value: defaultValue,
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
                     maxLength: maxLength && maxLength > 0 ? {
-                        value: maxLength && maxLength > 0 ,
-                        message:
-                            maxLength > 0 &&
-                            `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
+                        value: maxLength,
+                        message: `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
                     } : type === 'phone' ? {
                         value: 25,
                         message: 'Phone number must be 25 characters or less.',
