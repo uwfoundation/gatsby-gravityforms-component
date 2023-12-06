@@ -127,11 +127,9 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
             maxLength: fromNameField ? {
                 value: 50,
                 message: "Name must be less than 50 characters.",
-            } : maxLength > 0 && maxLength ? {
-                value: maxLength > 0 && maxLength,
-                message:
-                    maxLength > 0 &&
-                    `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
+            } : maxLength > 0 ? {
+                value: maxLength ,
+                message: `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
             } : null,
             pattern: {
                 value: fromNameField ?  /^[a-zA-Z' -]+$/ : regex,
@@ -171,23 +169,21 @@ const Input = ({ fieldData, name, value, fieldHidden, subfield, fromNameField, .
                     size
                 )}
                 id={name}
-                maxLength={type === 'phone' ? 26 : type === 'text' ? 256 : maxLength || 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
+                maxLength={maxLength ? maxLength : type === 'phone' ? 26 : type === 'text' ? 256 : 524288} // 524288 = 512kb, avoids invalid prop type error if maxLength is undefined.
                 name={name}
                 placeholder={placeholder}
                 {...register(name, {
                     value: defaultValue,
                     required: !fieldHidden ? isRequired && strings.errors.required : false,
-                    maxLength: type === 'phone' ? {
+                    maxLength: maxLength > 0 ? {
+                        value: maxLength,
+                        message: `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
+                    } : type === 'phone' ? {
                         value: 25,
                         message: 'Phone number must be 25 characters or less.',
                     } : type === 'text' ? {
                         value: 255,
                         message: "Must be 255 characters or less.",
-                    } : maxLength > 0 && maxLength ? {
-                        value: maxLength > 0 && maxLength,
-                        message:
-                            maxLength > 0 &&
-                            `${strings.errors.maxChar.front}  ${maxLength} ${strings.errors.maxChar.back}`,
                     } : null,
                     pattern: {
                         value: type === 'phone' 
