@@ -184,7 +184,7 @@ const GravityFormForm = ({
                         errorCallback({ id, values, error: data, reset })
                 }
 
-                if (status === 'success') {
+                if (status === 'success' && returnData?.is_valid === true) {
                     const { confirmation_message, confirmation_type, confirmation_redirect } = data?.data
 
                     if( confirmation_type === "redirect" && confirmation_redirect){
