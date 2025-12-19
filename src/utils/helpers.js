@@ -100,7 +100,6 @@ function handleButtonDisabledState(isValid, isDirty, isSubmitted, formLoading, s
 
     const allRulesMet = rules.every(evalRule)
     const anyRuleMet = rules.some(evalRule)
-    console.log(anyRuleMet)
 
     const action = (actionType || '').toString().toLowerCase()
     const logic = (logicType || '').toString().toLowerCase()
