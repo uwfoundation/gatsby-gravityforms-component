@@ -14,6 +14,8 @@ import {
     submissionHasOneFieldEntry,
 } from './utils/manageFormData'
 import passToGravityForms from './utils/passToGravityForms'
+import{ handleButtonDisabledState } from './utils/helpers'
+
 
 /**
  * Component to take Gravity Form graphQL data and turn into
@@ -64,6 +66,14 @@ const GravityFormForm = ({
                 return true
             }
         }
+    }
+
+    // Watch only the fields referenced by the submit button conditional logic rules
+    let watchedValues = undefined
+    const rules = singleForm?.submitButton?.conditionalLogic?.rules
+    if (Array.isArray(rules) && rules.length && rules.every(r => r && (r.fieldId !== undefined && r.fieldId !== null))) {
+        const watchFields = rules.map(r => `input_${r.fieldId}`)
+        watchedValues = methods.watch(watchFields)
     }
 
     const onSubmitCallback = async (values) => {
@@ -279,14 +289,15 @@ const GravityFormForm = ({
                                     className="gravityform__button gform_button button"
                                     id={`gform_submit_button_${id}`}
                                     type="submit"
-                                    disabled={isSubmitted ? !isDirty : !isDirty || !isValid }
+                                    disabled={handleButtonDisabledState(isValid, isDirty, isSubmitted, formLoading, singleForm, watchedValues)}
+
                                 >
                                     {formLoading ? (
                                         <span className="gravityform__button__loading_span">
                                             Loading
                                         </span>
                                     ) : (
-                                        singleForm?.button?.text || 'Submit'
+                                        singleForm?.submitButton?.text || 'Submit'
                                     )}
                                 </button>
                             </div>
