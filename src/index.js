@@ -104,18 +104,24 @@ const GravityFormForm = ({
                         if(Array.isArray(values[key])){
                             const arraytoUpdate = values[key]
                             let newobj = {}
-                            let count = 1
                             arraytoUpdate.forEach(value => {
-                                //check the index of choice in array of choices and use to submit with input number
+                                //check for each option's input id from gravity forms
+                                //otherwise, continue to use the index of choice in array of choices and use to submit with input number
                                 const fieldIdKey = parseInt(key.slice(6))
-                                Object.keys(formFieldsToCheck).forEach(fieldkey =>{
-                                    if(formFieldsToCheck[fieldkey]?.id === fieldIdKey ){
-                                        const inputNum = formFieldsToCheck[fieldkey]?.choices?.findIndex((x) => x.value === value)
-                                        count = inputNum + 1
-                                    }
-                                })
-                                newobj[`${key}_${count}`] = value
-                                count = count + 1
+                                const field = Object.values(formFieldsToCheck).find(f => f.id === fieldIdKey);
+                                if (field) {
+                                    values[key].forEach((value, index) => {
+                                        const inputIndex = field.choices?.findIndex(choice => choice.value === value);
+                                        const inputNum = field.inputs ? field.inputs[inputIndex]?.id : inputIndex;
+                                        let count;
+                                        if (field.inputs) {
+                                            count = parseInt(String(inputNum).split('.')[1]);
+                                        } else {
+                                            count = inputNum + 1;
+                                        }
+                                        newobj[`${key}_${count}`] = value;
+                                    });
+                                }
                             })
                             values = {...values, ...newobj}
                             delete values[key]
